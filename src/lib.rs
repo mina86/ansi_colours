@@ -14,9 +14,6 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with ansi_colours.  If not, see <http://www.gnu.org/licenses/>.
 
-#[cfg(feature = "with-palette")]
-extern crate palette;
-
 mod externs;
 
 /// Returns sRGB colour corresponding to the index in the 256-colour ANSI
