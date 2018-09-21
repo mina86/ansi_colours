@@ -14,6 +14,48 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with ansi_colours.  If not, see <http://www.gnu.org/licenses/>.
 
+//! `ansi_colours` is a library which converts between 24-bit sRGB colours and
+//! 8-bit colour palette used by ANSI terminals such as xterm on rxvt-unicode in
+//! 256-colour mode.
+//!
+//! The most common use case is when using 24-bit colours in a terminal emulator
+//! which only support 8-bit colour palette.  This package allows true-colours
+//! to be approximated by values supported by the terminal.
+//!
+//! When mapping true-colour into available 256-colour palette (of which only
+//! 240 are actually usable), this package tries to balance accuracy and
+//! performance.  It doesn’t implement the fastest algorithm nor is it the most
+//! accurate, instead it uses a formula which should be fast enough and accurate
+//! enough for most use-cases.
+//!
+//! ## Usage
+//!
+//! Using this library with Cargo projects is as simple as adding a single
+//! dependency:
+//!
+//! ```toml
+//! [dependencies]
+//! ansi_colours = "^1.0"
+//! ```
+//!
+//! and then using one of the two functions that the library provides:
+//!
+//! ```rust
+//! extern crate ansi_colours;
+//!
+//! use ansi_colours::*;
+//!
+//! fn main() {
+//!     // Colour at given index:
+//!     println!("{:-3}: {:?}", 50, rgb_from_ansi256(50));
+//!
+//!     // Approximate true-colour by colour in the palette:
+//!     let rgb = (100, 200, 150);
+//!     let index = ansi256_from_rgb(rgb);
+//!     println!("{:?} ~ {:-3} {:?}", rgb, index, rgb_from_ansi256(index));
+//! }
+//! ```
+
 mod externs;
 
 /// Returns sRGB colour corresponding to the index in the 256-colour ANSI

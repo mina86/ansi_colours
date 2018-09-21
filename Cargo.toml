@@ -1,14 +1,15 @@
 [package]
-name        = "ansi_colours"
-description = "true-colour ↔ ANSI terminal palette converter"
-version     = "1.0.0"
-readme      = "README.md"
-authors     = ["Michał Nazarewicz <mina86@mina86.com>"]
-keywords    = ["ansi", "terminal", "color", "rgb"]
-categories  = ["command-line-interface"]
-license     = "LGPL-3.0-or-later"
-repository  = "https://github.com/mina86/ansi_colours"
-exclude     = ["tools/**"]
+name          = "ansi_colours"
+description   = "true-colour ↔ ANSI terminal palette converter"
+version       = "1.0.1"
+readme        = "README.md"
+authors       = ["Michał Nazarewicz <mina86@mina86.com>"]
+keywords      = ["ansi", "terminal", "color", "rgb"]
+categories    = ["command-line-interface"]
+license       = "LGPL-3.0-or-later"
+repository    = "https://github.com/mina86/ansi_colours"
+documentation = "https://docs.rs/ansi_colours"
+exclude       = ["tools/**"]
 
 [badges]
 maintenance = { status = "actively-developed" }
