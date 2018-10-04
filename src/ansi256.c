@@ -39,8 +39,8 @@ uint32_t rgb_from_ansi256(uint8_t index) {
 	/* The 16 system colours as used by default by xterm.  Taken from
 	   XTerm-col.ad distributed with xterm source code. */
 	static uint32_t system_colours[16] = {
-		0x000000, 0xce0000, 0x00ce00, 0xcece00,
-		0x0000ee, 0xce00ce, 0x00cece, 0xefefef,
+		0x000000, 0xcd0000, 0x00cd00, 0xcdcd00,
+		0x0000ee, 0xcd00cd, 0x00cdcd, 0xe5e5e5,
 		0x7f7f7f, 0xff0000, 0x00ff00, 0xffff00,
 		0x5c5cff, 0xff00ff, 0x00ffff, 0xffffff,
 	};
