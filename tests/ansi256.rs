@@ -12,6 +12,7 @@ fn to_ansi(rgb: (u8, u8, u8)) -> u8 {
     ansi_colours::ansi256_from_rgb(rgb)
 }
 
+static CUBE_VALUES: [u8; 6] = [0, 95, 135, 175, 215, 255];
 
 #[test]
 fn test_to_rgb() {
@@ -21,8 +22,6 @@ fn test_to_rgb() {
         (0x7f, 0x7f, 0x7f), (0xff, 0x00, 0x00), (0x00, 0xff, 0x00), (0xff, 0xff, 0x00),
         (0x5c, 0x5c, 0xff), (0xff, 0x00, 0xff), (0x00, 0xff, 0xff), (0xff, 0xff, 0xff),
     ];
-
-    static CUBE_VALUES: [u8; 6] = [0, 95, 135, 175, 215, 255];
 
     // System colours
     for (idx, rgb) in SYSTEM_COLOURS.iter().enumerate() {
@@ -47,20 +46,15 @@ fn test_to_rgb() {
 /// Tries all colours in the 256-colour ANSI palette and chooses one with
 /// smallest ΔE*₀₀ to `rgb(y, y, y)`.
 fn best_grey(y: u8) -> u8 {
-    let mut best_dist = std::f32::INFINITY;
-    let mut best_idx = 0;
     let grey = [y, y, y];
-
-    for idx in 16..256 {
-        let (r, g, b) = to_rgb(idx as u8);
-        let dist = delta_e::DE2000::from_rgb(&grey, &[r, g, b]);
-        if dist < best_dist {
-            best_dist = dist;
-            best_idx = idx as u8;
-        }
-    }
-
-    best_idx
+    CUBE_VALUES.iter().enumerate().map(|(idx, v)| {
+        (*v, idx as u8 * (36 + 6 + 1) + 16)
+    }).chain((0..24u8).map(|idx| {
+        (idx * 10 + 8, idx + 232)
+    })).fold((std::f32::INFINITY, 0), |best, elem| {
+        let d = delta_e::DE2000::from_rgb(&grey, &[elem.0, elem.0, elem.0]);
+        if d < best.0 { (d, elem.1) } else { best }
+    }).1
 }
 
 #[test]
