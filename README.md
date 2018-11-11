@@ -49,12 +49,10 @@ fn main() {
 
 ### C and C++
 
-The easiest way to use this package in C or C++ is to copy the
-`ansi_colour.h` and `ansi256.c` files to your project (unfortunately,
-C nor C++ has any centralised package repository), set up compilation
-step for the `ansi256.c` file, add header file to include path and
-once all that is done use the two functions provided by this library
-can be used:
+The easiest way to use this library in C or C++ is to copy the
+`ansi_colour.h` and `ansi256.c` files to your project, set up
+compilation step for the `ansi256.c` file, add the header file to the
+include path and once all that is done use the two provided functions:
 
 ```c
 #include <stdio.h>
@@ -74,6 +72,6 @@ int main() {
 }
 ```
 
-C nor C++ ecosystem has a centralised library distribution service
-which is why at this stage the easiest way is to just copy the two
-required files.
+Unfortunately neither C nor C++ ecosystem has a centralised package
+distribution service so there currently is no more convenient
+solution..
