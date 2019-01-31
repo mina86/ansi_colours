@@ -18,15 +18,20 @@ extern crate delta_e;
 extern crate lab;
 
 
-fn luminance_mean(r: u8, g: u8, b: u8) -> u8 {
+fn luminance_average(r: u8, g: u8, b: u8) -> u8 {
     ((r as u16 + g as u16 + b as u16) / 3) as u8
 }
 
-fn luminance_mean2g(r: u8, g: u8, b: u8) -> u8 {
+fn luminance_average_2g(r: u8, g: u8, b: u8) -> u8 {
     ((r as u16 + 2 * g as u16 + b as u16) / 4) as u8
 }
 
-fn luminance_weighted(r: u8, g: u8, b: u8) -> u8 {
+fn luminance_average_16(r: u8, g: u8, b: u8) -> u8 {
+    let y = 54 * r as u16 + 183 * g as u16 + 19 * b as u16;
+    (y >> 8) as u8
+}
+
+fn luminance_average_32(r: u8, g: u8, b: u8) -> u8 {
     let y = 3568058 * r as u32 + 11998262 * g as u32 + 1210896 * b as u32;
     (y >> 24) as u8
     // FYI, the above gives the same results as:
@@ -124,7 +129,13 @@ fn distance(r: u8, g: u8, b: u8, grey: u8) -> f32 {
     delta_e::DE2000::new(lab_from_y(y), lab_from_y(to_linear(grey)))
 }
 
-fn try_function(name: &str, f: &Fn(u8, u8, u8)->u8) {
+struct Histogram {
+    name: &'static str,
+    data: [u32; 101],
+}
+
+fn measure_function(name: &'static str, f: &Fn(u8, u8, u8)->u8) -> Histogram {
+    // Measure time
     let start = std::time::Instant::now();
     let mut hash: u32 = 0;
     for c in 0..(1 << 24) {
@@ -134,21 +145,22 @@ fn try_function(name: &str, f: &Fn(u8, u8, u8)->u8) {
     let elapsed = start.elapsed();
     let elapsed = elapsed.as_secs() * 1000 + elapsed.subsec_millis() as u64;
 
+    // Calculate statistics
+    let mut histogram = [0; 101];
     let mut total_dist = 0.0;
     let mut max_dist = 0.0;
-    let mut n = 0;
     for c in 0..(1 << 24) {
         let (r, g, b) = ((c >> 16) as u8, (c >> 8) as u8, c as u8);
         let d = distance(r, g, b, f(r, g, b)) as f64;
+        histogram[std::cmp::min(d as usize, histogram.len() - 1)] += 1;
         if d > max_dist {
             max_dist = d;
         }
         total_dist += d;
-        n += 1;
     }
 
     print!("{} {:5} ms;  distance: avg={:9.6} max={:9.6};  [{:x}]",
-           name, elapsed, total_dist / n as f64, max_dist, hash);
+           name, elapsed, total_dist / (1 << 24) as f64, max_dist, hash);
 
     let black = f(0, 0, 0);
     let white = f(255, 255, 255);
@@ -159,14 +171,45 @@ fn try_function(name: &str, f: &Fn(u8, u8, u8)->u8) {
         print!(" white={}", white);
     }
     println!();
+
+    Histogram { name: name, data: histogram }
 }
 
 fn main() {
-    try_function("(r +  g + b) / 3", &luminance_mean);
-    try_function("(r + 2g + b) / 4", &luminance_mean2g);
-    try_function("weighted average", &luminance_weighted);
-    try_function("γ=2.0           ", &luminance_square);
-    try_function("γ=2 (no float)  ", &luminance_isqrt );
-    try_function("γ=2.2           ", &luminance_gamma22);
-    try_function("precise         ", &luminance_xyz);
+    let mut histograms = Vec::new();
+
+    println!("Benchmarks");
+    histograms.push(measure_function("average     ", &luminance_average));
+    histograms.push(measure_function("… w/ 2*green", &luminance_average_2g));
+    histograms.push(measure_function("… 16-bit alu", &luminance_average_16));
+    histograms.push(measure_function("… 32-bit alu", &luminance_average_32));
+    histograms.push(measure_function("γ=2.0       ", &luminance_square));
+    histograms.push(measure_function("γ=2 (no fpu)", &luminance_isqrt));
+    histograms.push(measure_function("γ=2.2       ", &luminance_gamma22));
+    histograms.push(measure_function("precise     ", &luminance_xyz));
+
+    println!("\nHistogram        d<1   1≤d<2   2≤d<3   3≤d<4   4≤d<5   5≤d<6   6≤d<7   7≤d");
+    for histogram in histograms.iter() {
+        print!("{}" , histogram.name);
+        let mut n = 8;
+        while histogram.data[n - 1] == 0 {
+            n -= 1;
+        }
+        let mut left = 1 << 24;
+        for count in histogram.data.iter().take(n - 1) {
+            print!(" {:6.2}%", *count as f64 * 100.0 / (1 << 24) as f64);
+            left -= count;
+        }
+        print!(" {:6.2}%", left as f64 * 100.0 / (1 << 24) as f64);
+        println!();
+    }
+
+    println!("\nHistogram CSV");
+    for histogram in histograms.iter() {
+        print!("\"{}\"" , histogram.name);
+        for count in histogram.data.iter() {
+            print!(",{}", *count);
+        }
+        println!();
+    }
 }
