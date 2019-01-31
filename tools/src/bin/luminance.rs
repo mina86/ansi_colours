@@ -32,20 +32,17 @@ fn luminance_average_16(r: u8, g: u8, b: u8) -> u8 {
 }
 
 fn luminance_average_32(r: u8, g: u8, b: u8) -> u8 {
-    let y = 3568058 * r as u32 + 11998262 * g as u32 + 1210896 * b as u32;
+    // Going any further than 32-bit arithmetic doesn’t change the results one
+    // bit.  This isn’t really surprising considering that input and output is
+    // only 8-bit wide.
+    let y = 3567454 * r as u32 + 11998779 * g as u32 + 1210983 * b as u32;
     (y >> 24) as u8
-    // FYI, the above gives the same results as:
-    //     let y = 2647777 * r as u32 + 8903644 * g as u32 + 898579 * b as u32;
-    //     (y / 12450000) as u8
-    // and:
-    //     let y = 7943331 * r as u64 + 26710933 * g as u64 + 2695736 * b as u64
-    //     (y / 37350000) as u8
 }
 
 fn luminance_square(r: u8, g: u8, b: u8) -> u8 {
-    ((r as f32 * r as f32 * 0.21267285140562248 +
-      g as f32 * g as f32 * 0.715152155287818   +
-      b as f32 * b as f32 * 0.07217499330655958).sqrt() + 0.5) as u8
+    ((r as f32 * r as f32 * 0.21263682167732384 +
+      g as f32 * g as f32 * 0.7151829818412507  +
+      b as f32 * b as f32 * 0.07218019648142547).sqrt() + 0.5) as u8
 }
 
 fn luminance_isqrt(r: u8, g: u8, b: u8) -> u8 {
@@ -77,9 +74,9 @@ fn luminance_gamma22(r: u8, g: u8, b: u8) -> u8 {
         ((v.powf(1.0 / 2.2) * 255.0) + 0.5) as u8
     }
 
-    from_linear(0.21267285140562248 * to_linear(r) +
-                0.715152155287818   * to_linear(g) +
-                0.07217499330655958 * to_linear(b))
+    from_linear(0.21263682167732384 * to_linear(r) +
+                0.7151829818412507  * to_linear(g) +
+                0.07218019648142547 * to_linear(b))
 }
 
 fn luminance_xyz(r: u8, g: u8, b: u8) -> u8 {
@@ -99,9 +96,9 @@ fn luminance_xyz(r: u8, g: u8, b: u8) -> u8 {
         } + 0.5) as u8
     }
 
-    from_linear(0.21267285140562248 * to_linear(r) +
-                0.715152155287818   * to_linear(g) +
-                0.07217499330655958 * to_linear(b))
+    from_linear(0.21263682167732384 * to_linear(r) +
+                0.7151829818412507  * to_linear(g) +
+                0.07218019648142547 * to_linear(b))
 }
 
 fn distance(r: u8, g: u8, b: u8, grey: u8) -> f32 {
@@ -123,9 +120,10 @@ fn distance(r: u8, g: u8, b: u8, grey: u8) -> f32 {
         lab::Lab { l: l, a: 0.0, b: 0.0 }
     }
 
-    let y = 0.212672851 * to_linear(r) +
-        0.715152155 * to_linear(g) +
-        0.072174993 * to_linear(b);
+    let y =
+        0.21267285140562248 * to_linear(r) +
+        0.715152155287818   * to_linear(g) +
+        0.07217499330655958 * to_linear(b);
     delta_e::DE2000::new(lab_from_y(y), lab_from_y(to_linear(grey)))
 }
 
