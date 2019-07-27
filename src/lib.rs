@@ -82,7 +82,7 @@ mod externs;
 #[inline]
 pub fn rgb_from_ansi256(idx: u8) -> (u8, u8, u8) {
     let rgb = unsafe { externs::rgb_from_ansi256(idx) };
-    ((rgb >> 16) as u8, (rgb >>  8) as u8, rgb as u8)
+    ((rgb >> 16) as u8, (rgb >> 8) as u8, rgb as u8)
 }
 
 /// Returns index of a colour in 256-colour ANSI palette approximating given
@@ -120,7 +120,9 @@ pub trait AsRGB {
 
 /// Representation of an RGB colour as 24-bit `0xRRGGBB` integer.
 impl AsRGB for u32 {
-    fn as_u32(&self) -> u32 { *self }
+    fn as_u32(&self) -> u32 {
+        *self
+    }
 }
 
 #[inline]
@@ -129,13 +131,19 @@ fn to_u32(r: u8, g: u8, b: u8) -> u32 {
 }
 
 impl AsRGB for (u8, u8, u8) {
-    fn as_u32(&self) -> u32 { to_u32(self.0, self.1, self.2) }
+    fn as_u32(&self) -> u32 {
+        to_u32(self.0, self.1, self.2)
+    }
 }
 
 impl AsRGB for [u8; 3] {
-    fn as_u32(&self) -> u32 { to_u32(self[0], self[1], self[2]) }
+    fn as_u32(&self) -> u32 {
+        to_u32(self[0], self[1], self[2])
+    }
 }
 
 impl<'a, T: AsRGB + ?Sized> AsRGB for &'a T {
-    fn as_u32(&self) -> u32 { (*self).as_u32() }
+    fn as_u32(&self) -> u32 {
+        (*self).as_u32()
+    }
 }
