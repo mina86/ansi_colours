@@ -3,7 +3,6 @@ extern crate lab;
 
 extern crate ansi_colours;
 
-
 fn to_rgb(index: u8) -> (u8, u8, u8) {
     ansi_colours::rgb_from_ansi256(index)
 }
@@ -17,10 +16,22 @@ static CUBE_VALUES: [u8; 6] = [0, 95, 135, 175, 215, 255];
 #[test]
 fn test_to_rgb() {
     static SYSTEM_COLOURS: [(u8, u8, u8); 16] = [
-        (  0,   0,   0), (205,   0,   0), (  0, 205,   0), (205, 205,   0),
-        (  0,   0, 238), (205,   0, 205), (  0, 205, 205), (229, 229, 229),
-        (127, 127, 127), (255,   0,   0), (  0, 255,   0), (255, 255,   0),
-        ( 92,  92, 255), (255,   0, 255), (  0, 255, 255), (255, 255, 255),
+        (0, 0, 0),
+        (205, 0, 0),
+        (0, 205, 0),
+        (205, 205, 0),
+        (0, 0, 238),
+        (205, 0, 205),
+        (0, 205, 205),
+        (229, 229, 229),
+        (127, 127, 127),
+        (255, 0, 0),
+        (0, 255, 0),
+        (255, 255, 0),
+        (92, 92, 255),
+        (255, 0, 255),
+        (0, 255, 255),
+        (255, 255, 255),
     ];
 
     // System colours
@@ -30,10 +41,14 @@ fn test_to_rgb() {
 
     // Colour cube
     for idx in 0..216 {
-        assert_eq!((CUBE_VALUES[ idx / 36     ],
-                    CUBE_VALUES[(idx /  6) % 6],
-                    CUBE_VALUES[ idx       % 6]),
-                   to_rgb(16 + idx as u8));
+        assert_eq!(
+            (
+                CUBE_VALUES[idx / 36],
+                CUBE_VALUES[(idx / 6) % 6],
+                CUBE_VALUES[idx % 6]
+            ),
+            to_rgb(16 + idx as u8)
+        );
     }
 
     // Greyscale ramp
@@ -47,14 +62,20 @@ fn test_to_rgb() {
 /// smallest ΔE*₀₀ to `rgb(y, y, y)`.
 fn best_grey(y: u8) -> u8 {
     let grey = [y, y, y];
-    CUBE_VALUES.iter().enumerate().map(|(idx, v)| {
-        (*v, idx as u8 * (36 + 6 + 1) + 16)
-    }).chain((0..24u8).map(|idx| {
-        (idx * 10 + 8, idx + 232)
-    })).fold((std::f32::INFINITY, 0), |best, elem| {
-        let d = delta_e::DE2000::from_rgb(&grey, &[elem.0, elem.0, elem.0]);
-        if d < best.0 { (d, elem.1) } else { best }
-    }).1
+    CUBE_VALUES
+        .iter()
+        .enumerate()
+        .map(|(idx, v)| (*v, idx as u8 * (36 + 6 + 1) + 16))
+        .chain((0..24u8).map(|idx| (idx * 10 + 8, idx + 232)))
+        .fold((std::f32::INFINITY, 0), |best, elem| {
+            let d = delta_e::DE2000::from_rgb(&grey, &[elem.0, elem.0, elem.0]);
+            if d < best.0 {
+                (d, elem.1)
+            } else {
+                best
+            }
+        })
+        .1
 }
 
 #[test]
@@ -75,8 +96,8 @@ fn test_to_ansi_exact() {
 
 #[test]
 fn test_to_ansi_approx() {
-    assert_eq!( 16, to_ansi((  1,   1,   1)));
-    assert_eq!(232, to_ansi((  7,   7,   7)));
-    assert_eq!(232, to_ansi((  8,   7,   8)));
-    assert_eq!( 64, to_ansi(( 97, 134,   8)));
+    assert_eq!(16, to_ansi((1, 1, 1)));
+    assert_eq!(232, to_ansi((7, 7, 7)));
+    assert_eq!(232, to_ansi((8, 7, 8)));
+    assert_eq!(64, to_ansi((97, 134, 8)));
 }

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with ansi_colours.  If not, see <http://www.gnu.org/licenses/>.
 
-extern {
+extern "C" {
     pub fn rgb_from_ansi256(index: u8) -> u32;
     pub fn ansi256_from_rgb(rgb: u32) -> u8;
 }
