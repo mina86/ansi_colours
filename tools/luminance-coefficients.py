@@ -194,7 +194,7 @@ def print_matrix_real(name, matrix):
 
 
 def print_matrix_rational(name, matrix):
-    gcd = getattr(math, 'gcd', fractions.gcd)  # Python2 compatibility
+    gcd = getattr(math, 'gcd', None) or fractions.gcd  # Python2 compatibility
     rows = len(matrix)
 
     # Format all the values as rational numbers, i.e. each number results in two
