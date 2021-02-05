@@ -6,4 +6,6 @@ publish = false
 
 [dependencies]
 delta_e = "^0.2"
-lab = "^0.4"
+# delta_e uses lab 0.7 so we cannot go up to 0.8
+# https://github.com/elliotekj/DeltaE/pull/5
+lab = "^0.7"
