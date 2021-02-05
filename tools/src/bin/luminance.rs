@@ -14,10 +14,6 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with ansi_colours.  If not, see <http://www.gnu.org/licenses/>.
 
-extern crate delta_e;
-extern crate lab;
-
-
 fn luminance_average(r: u8, g: u8, b: u8) -> u8 {
     ((r as u16 + g as u16 + b as u16) / 3) as u8
 }
@@ -110,21 +106,29 @@ fn distance(r: u8, g: u8, b: u8, grey: u8) -> f32 {
         }
     }
 
-    fn lab_from_y(y: f32) -> lab::Lab {
+    fn l_from_y(y: f32) -> f32 {
         // http://www.brucelindbloom.com/index.html?Eqn_XYZ_to_Lab.html
-        let l = if y > 216.0 / 24389.0 {
+        if y > 216.0 / 24389.0 {
             116.0 * y.powf(1.0 / 3.0) - 16.0
         } else {
             24389.0 / 27.0 * y
-        };
-        lab::Lab { l: l, a: 0.0, b: 0.0 }
+        }
+    }
+
+    // ΔE₀₀ implementation with assumption that a* and b* for both colours are
+    // zero.  I.e. compares two shades of grey.
+    fn de(l1: f32, l2: f32) -> f32 {
+        let v = ((l1 + l2) / 2.0 - 50.0).powi(2);
+        let div = 1.0 + ((0.015 * v) / (20.0 + v).sqrt());
+        (l2 - l1).abs() / div
     }
 
     let y =
         0.21267285140562248 * to_linear(r) +
         0.715152155287818   * to_linear(g) +
         0.07217499330655958 * to_linear(b);
-    delta_e::DE2000::new(lab_from_y(y), lab_from_y(to_linear(grey)))
+
+    de(l_from_y(y), l_from_y(to_linear(grey)))
 }
 
 struct Histogram {
