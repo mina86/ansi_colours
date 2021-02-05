@@ -41,23 +41,30 @@ fn luminance_square(r: u8, g: u8, b: u8) -> u8 {
 }
 
 fn luminance_isqrt(r: u8, g: u8, b: u8) -> u8 {
-    fn isqrt(n: u16) -> u8 {
-        let mut c: u16 = 0x80;
-        let mut g: u16 = 0;
+    fn isqrt(n: u32) -> u8 {
+        let mut n = n;
+        let mut x = 0;
+        let mut b = 1 << 16;
 
-        while c != 0 {
-            g |= c;
-            if g * g > n {
-                g ^= c;
-            }
-            c >>= 1;
+        while b > n {
+            b = b / 4;
         }
-        g as u8
+
+        while b != 0 {
+            if n >= x + b {
+                n = n - x - b;
+                x = x / 2 + b;
+            } else {
+                x = x / 2;
+            }
+            b = b / 4;
+        }
+        x as u8
     }
 
-    isqrt(((r as u32 * r as u32 * 13938 +
-            g as u32 * g as u32 * 46868 +
-            b as u32 * b as u32 *  4730) >> 16) as u16)
+    isqrt((r as u32 * r as u32 * 13938 +
+           g as u32 * g as u32 * 46868 +
+           b as u32 * b as u32 *  4730) >> 16)
 }
 
 fn luminance_gamma22(r: u8, g: u8, b: u8) -> u8 {
@@ -184,8 +191,8 @@ fn main() {
     histograms.push(measure_function("… w/ 2*green", &luminance_average_2g));
     histograms.push(measure_function("… 16-bit alu", &luminance_average_16));
     histograms.push(measure_function("… 32-bit alu", &luminance_average_32));
-    histograms.push(measure_function("γ=2.0       ", &luminance_square));
     histograms.push(measure_function("γ=2 (no fpu)", &luminance_isqrt));
+    histograms.push(measure_function("γ=2.0       ", &luminance_square));
     histograms.push(measure_function("γ=2.2       ", &luminance_gamma22));
     histograms.push(measure_function("precise     ", &luminance_xyz));
 
