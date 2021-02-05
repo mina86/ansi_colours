@@ -23,8 +23,7 @@ fn luminance_average_2g(r: u8, g: u8, b: u8) -> u8 {
 }
 
 fn luminance_average_16(r: u8, g: u8, b: u8) -> u8 {
-    let y = 54 * r as u16 + 183 * g as u16 + 19 * b as u16;
-    (y >> 8) as u8
+    ((54 * r as u16 + 183 * g as u16 + 19 * b as u16) >> 8) as u8
 }
 
 fn luminance_average_32(r: u8, g: u8, b: u8) -> u8 {
@@ -136,7 +135,8 @@ struct Histogram {
     data: [u32; 101],
 }
 
-fn measure_function(name: &'static str, f: &Fn(u8, u8, u8)->u8) -> Histogram {
+fn measure_function(name: &'static str,
+                    f: &dyn Fn(u8, u8, u8)->u8) -> Histogram {
     // Measure time
     let start = std::time::Instant::now();
     let mut hash: u32 = 0;
@@ -144,8 +144,7 @@ fn measure_function(name: &'static str, f: &Fn(u8, u8, u8)->u8) -> Histogram {
         hash = hash.overflowing_mul(17).0.overflowing_add(
             f((c >> 16) as u8, (c >> 8) as u8, c as u8) as u32).0;
     }
-    let elapsed = start.elapsed();
-    let elapsed = elapsed.as_secs() * 1000 + elapsed.subsec_millis() as u64;
+    let elapsed = start.elapsed().as_millis() as u64;
 
     // Calculate statistics
     let mut histogram = [0; 101];
@@ -206,11 +205,23 @@ fn main() {
         println!();
     }
 
+    let end = {
+        let mut i = histograms[0].data.len();
+        while histograms.iter().map(|h| h.data[i - 1] == 0).all(|v| v) {
+            i -= 1;
+        }
+        i
+    };
     println!("\nHistogram CSV");
+    print!("Algorithm,d<1");
+    for i in 1..end {
+        print!(",{}≤d<{}", i, i + 1);
+    }
+    println!();
     for histogram in histograms.iter() {
         print!("\"{}\"" , histogram.name);
-        for count in histogram.data.iter() {
-            print!(",{}", *count);
+        for i in 0..end {
+            print!(",{}", histogram.data[i]);
         }
         println!();
     }
