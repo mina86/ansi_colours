@@ -34,6 +34,12 @@ fn luminance_average_32(r: u8, g: u8, b: u8) -> u8 {
     (y >> 24) as u8
 }
 
+fn luminance_average_float(r: u8, g: u8, b: u8) -> u8 {
+    (r as f32 * 0.21263682167732384 +
+     g as f32 * 0.7151829818412507  +
+     b as f32 * 0.07218019648142547 + 0.5) as u8
+}
+
 fn luminance_square(r: u8, g: u8, b: u8) -> u8 {
     ((r as f32 * r as f32 * 0.21263682167732384 +
       g as f32 * g as f32 * 0.7151829818412507  +
@@ -191,6 +197,7 @@ fn main() {
     histograms.push(measure_function("… w/ 2*green", &luminance_average_2g));
     histograms.push(measure_function("… 16-bit alu", &luminance_average_16));
     histograms.push(measure_function("… 32-bit alu", &luminance_average_32));
+    histograms.push(measure_function("… floats    ", &luminance_average_float));
     histograms.push(measure_function("γ=2 (no fpu)", &luminance_isqrt));
     histograms.push(measure_function("γ=2.0       ", &luminance_square));
     histograms.push(measure_function("γ=2.2       ", &luminance_gamma22));
