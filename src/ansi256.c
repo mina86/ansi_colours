@@ -173,10 +173,13 @@ static uint8_t luminance(uint32_t rgb) {
 	   and at the same time noticeably more prices.  The coefficients are
 	   the second row of the RGB->XYZ conversion matrix (i.e. values for
 	   calculating Y from linear RGB) which I’ve calculated so that
-	   denominator is 2^²⁴ to simplify division. */
-	return ((uint32_t) 3568058 * R(rgb) +
-	        (uint32_t)11998262 * G(rgb) +
-	        (uint32_t) 1210896 * B(rgb)) >> 24;
+	   denominator is 256 to simplify division.  Turns out that larger
+	   denominator doesn’t produce better results. */
+	const uint32_t v = (UINT32_C( 3567454) * R(rgb) +
+	                    UINT32_C(11998779) * G(rgb) +
+	                    UINT32_C( 1210983) * B(rgb));
+	/* Round to nearest rather than truncating when dividing. */
+	return (v + (UINT32_C(1) << 23)) >> 24;
 
 	/* Approximating sRGB gamma correction with a simple γ=2 improves the
 	   precision considerably but is also five times slower than the above

@@ -23,7 +23,8 @@ fn luminance_average_2g(r: u8, g: u8, b: u8) -> u8 {
 }
 
 fn luminance_average_16(r: u8, g: u8, b: u8) -> u8 {
-    ((54 * r as u16 + 183 * g as u16 + 19 * b as u16) >> 8) as u8
+    let y = 54 * r as u16 + 183 * g as u16 + 19 * b as u16;
+    ((y + (1 << 7)) >> 8) as u8
 }
 
 fn luminance_average_32(r: u8, g: u8, b: u8) -> u8 {
@@ -31,7 +32,7 @@ fn luminance_average_32(r: u8, g: u8, b: u8) -> u8 {
     // bit.  This isn’t really surprising considering that input and output is
     // only 8-bit wide.
     let y = 3567454 * r as u32 + 11998779 * g as u32 + 1210983 * b as u32;
-    (y >> 24) as u8
+    ((y + (1 << 23)) >> 24) as u8
 }
 
 fn luminance_average_float(r: u8, g: u8, b: u8) -> u8 {
