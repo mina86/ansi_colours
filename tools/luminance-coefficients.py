@@ -21,7 +21,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import collections
-import fractions
+from fractions import Fraction
 import functools
 import math
 import sys
@@ -97,7 +97,7 @@ def mul_matrix_by_diag(matrix, column):
 Chromaticity = collections.namedtuple('Chromaticity', 'x y')
 
 def calculate_rgb_matrix(primaries, white):
-    """Returns an RGB→XYZ transformation matrix for given primaries and white.
+    """Returns white point and an RGB→XYZ transformation matrix.
 
     The primaries argument is a sequence of three Chromaticity objects defining
     the primary colours of the RGB colour space.  In other words, a sequence of
@@ -108,8 +108,9 @@ def calculate_rgb_matrix(primaries, white):
     point, i.e. the x and y coordinates of the white point.  Y component is
     assumed to be one.
 
-    The function returns a 3✕3 RGB→XYZ transformation matrix (represented as
-    a three-element sequence of three-element sequences).
+    The function returns a tuple with white point’s XYZ coordinates and a3✕3
+    RGB→XYZ transformation matrix (represented as a three-element sequence of
+    three-element sequences).
     """
     # Calculate the transformation matrix as per
     # https://mina86.com/2019/srgb-xyz-matrix/
@@ -122,7 +123,9 @@ def calculate_rgb_matrix(primaries, white):
     Y = mul_matrix_by_column(inverse_3x3_matrix(M_prime), W)
 
     # M = M′ ✕ diag(Y)
-    return mul_matrix_by_diag(M_prime, Y)
+    M = mul_matrix_by_diag(M_prime, Y)
+
+    return W, M
 
 
 ################################################################################
@@ -130,15 +133,15 @@ def calculate_rgb_matrix(primaries, white):
 ################################################################################
 
 def calculate_srgb_matrix():
-    """Returns an sRGB→XYZ transformation matrix."""
+    """Returns a D65 white point and an sRGB→XYZ transformation matrix."""
     # https://www.itu.int/dms_pubrec/itu-r/rec/bt/R-REC-BT.709-6-201506-I!!PDF-E.pdf
     primaries = (
-        Chromaticity(fractions.Fraction(64, 100), fractions.Fraction(33, 100)),
-        Chromaticity(fractions.Fraction(30, 100), fractions.Fraction(60, 100)),
-        Chromaticity(fractions.Fraction(15, 100), fractions.Fraction( 6, 100))
+        Chromaticity(Fraction(64, 100), Fraction(33, 100)),
+        Chromaticity(Fraction(30, 100), Fraction(60, 100)),
+        Chromaticity(Fraction(15, 100), Fraction( 6, 100))
     )
-    white = Chromaticity(fractions.Fraction(31271, 100000),
-                         fractions.Fraction(32902, 100000))
+    white = Chromaticity(Fraction(312713, 1000000),
+                         Fraction(329016, 1000000))
 
     return calculate_rgb_matrix(primaries, white)
 
@@ -224,6 +227,22 @@ def print_matrix(name, matrix):
     print()
 
 
+def print_vector(name, vector):
+    vec = [repr(v.numerator / v.denominator) for v in vector]
+    print('{} ≈ [{}]'.format(name, ' '.join(vec)))
+    vec = ['{} / {}'.format(v.numerator, v.denominator) for v in vector]
+    print('{} = [{}]'.format(name, ' '.join(vec)))
+    for bits in (56, 24, 16, 8):
+        d = 1 << bits
+        vec = [int(v.numerator * d // v.denominator) for v in vector]
+        got_d = sum(vec)
+        while got_d < d:
+            idx = max(range(len(vec)),
+                      key=lambda i: vector[i] - Fraction(vec[i], got_d))
+            vec[idx] += 1
+            got_d += 1
+        print('{} ≈ {} / 2**{}'.format(name, vec, bits))
+
 
 ################################################################################
 #### main
@@ -234,24 +253,13 @@ def main():
         import codecs
         sys.stdout = codecs.getwriter('utf8')(sys.stdout)
 
-    M = calculate_srgb_matrix()
+    W, M = calculate_srgb_matrix()
 
+    print_vector('W', W)
+    print()
     print_matrix('M', M)
     print_matrix('M⁻¹', inverse_3x3_matrix(M))
-
-    Y = M[1]
-    vec = [repr(v.numerator / v.denominator) for v in Y]
-    print('Y ≈ [{}]'.format(' '.join(vec)))
-    for bits in (56, 24, 16, 8):
-        d = 1 << bits
-        vec = [int(v.numerator * d // v.denominator) for v in Y]
-        got_d = sum(vec)
-        while got_d < d:
-            idx = max(range(len(vec)),
-                      key=lambda i: Y[i] - fractions.Fraction(vec[i], got_d))
-            vec[idx] += 1
-            got_d += 1
-        print('Y ≈ {} / 2**{}'.format(vec, bits))
+    print_vector('Y', M[1])
 
 
 if __name__ == '__main__':

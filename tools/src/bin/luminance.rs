@@ -31,20 +31,20 @@ fn luminance_average_32(r: u8, g: u8, b: u8) -> u8 {
     // Going any further than 32-bit arithmetic doesn’t change the results one
     // bit.  This isn’t really surprising considering that input and output is
     // only 8-bit wide.
-    let y = 3567454 * r as u32 + 11998779 * g as u32 + 1210983 * b as u32;
+    let y = 3567664 * r as u32 + 11998547 * g as u32 + 1211005 * b as u32;
     ((y + (1 << 23)) >> 24) as u8
 }
 
 fn luminance_average_float(r: u8, g: u8, b: u8) -> u8 {
-    (r as f32 * 0.21263682167732384 +
-     g as f32 * 0.7151829818412507  +
-     b as f32 * 0.07218019648142547 + 0.5) as u8
+    (r as f32 * 0.21264934272065283 +
+     g as f32 * 0.7151691357059038  +
+     b as f32 * 0.07218152157344333 + 0.5) as u8
 }
 
 fn luminance_square(r: u8, g: u8, b: u8) -> u8 {
-    ((r as f32 * r as f32 * 0.21263682167732384 +
-      g as f32 * g as f32 * 0.7151829818412507  +
-      b as f32 * b as f32 * 0.07218019648142547).sqrt() + 0.5) as u8
+    ((r as f32 * r as f32 * 0.21264934272065283 +
+      g as f32 * g as f32 * 0.7151691357059038  +
+      b as f32 * b as f32 * 0.07218152157344333).sqrt() + 0.5) as u8
 }
 
 fn luminance_isqrt(r: u8, g: u8, b: u8) -> u8 {
@@ -69,9 +69,9 @@ fn luminance_isqrt(r: u8, g: u8, b: u8) -> u8 {
         x as u8
     }
 
-    isqrt((r as u32 * r as u32 * 13938 +
-           g as u32 * g as u32 * 46868 +
-           b as u32 * b as u32 *  4730) >> 16)
+    isqrt((r as u32 * r as u32 * 13936 +
+           g as u32 * g as u32 * 46869 +
+           b as u32 * b as u32 *  4731) >> 16)
 }
 
 fn luminance_gamma22(r: u8, g: u8, b: u8) -> u8 {
@@ -83,9 +83,9 @@ fn luminance_gamma22(r: u8, g: u8, b: u8) -> u8 {
         ((v.powf(1.0 / 2.2) * 255.0) + 0.5) as u8
     }
 
-    from_linear(0.21263682167732384 * to_linear(r) +
-                0.7151829818412507  * to_linear(g) +
-                0.07218019648142547 * to_linear(b))
+    from_linear(0.21264934272065283 * to_linear(r) +
+                0.7151691357059038  * to_linear(g) +
+                0.07218152157344333 * to_linear(b))
 }
 
 fn luminance_xyz(r: u8, g: u8, b: u8) -> u8 {
@@ -105,9 +105,9 @@ fn luminance_xyz(r: u8, g: u8, b: u8) -> u8 {
         } + 0.5) as u8
     }
 
-    from_linear(0.21263682167732384 * to_linear(r) +
-                0.7151829818412507  * to_linear(g) +
-                0.07218019648142547 * to_linear(b))
+    from_linear(0.21264934272065283 * to_linear(r) +
+                0.7151691357059038  * to_linear(g) +
+                0.07218152157344333 * to_linear(b))
 }
 
 fn distance(r: u8, g: u8, b: u8, grey: u8) -> f32 {
@@ -137,9 +137,9 @@ fn distance(r: u8, g: u8, b: u8, grey: u8) -> f32 {
     }
 
     let y =
-        0.21267285140562248 * to_linear(r) +
-        0.715152155287818   * to_linear(g) +
-        0.07217499330655958 * to_linear(b);
+        0.21264934272065283 * to_linear(r) +
+        0.7151691357059038  * to_linear(g) +
+        0.07218152157344333 * to_linear(b);
 
     de(l_from_y(y), l_from_y(to_linear(grey)))
 }

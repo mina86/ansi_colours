@@ -173,11 +173,10 @@ static uint8_t luminance(uint32_t rgb) {
 	   and at the same time noticeably more prices.  The coefficients are
 	   the second row of the RGB->XYZ conversion matrix (i.e. values for
 	   calculating Y from linear RGB) which I’ve calculated so that
-	   denominator is 256 to simplify division.  Turns out that larger
-	   denominator doesn’t produce better results. */
-	const uint32_t v = (UINT32_C( 3567454) * R(rgb) +
-	                    UINT32_C(11998779) * G(rgb) +
-	                    UINT32_C( 1210983) * B(rgb));
+	   denominator is 2^24 to simplify division.  */
+	const uint32_t v = (UINT32_C( 3567664) * R(rgb) +
+	                    UINT32_C(11998547) * G(rgb) +
+	                    UINT32_C( 1211005) * B(rgb));
 	/* Round to nearest rather than truncating when dividing. */
 	return (v + (UINT32_C(1) << 23)) >> 24;
 
