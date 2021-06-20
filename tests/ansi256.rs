@@ -56,7 +56,7 @@ fn best_grey(y: u8) -> u8 {
         .enumerate()
         .map(|(idx, v)| (*v, idx as u8 * (36 + 6 + 1) + 16))
         .chain((0..24u8).map(|idx| (idx * 10 + 8, idx + 232)))
-        .fold((std::f32::INFINITY, 0), |best, elem| {
+        .fold((f32::INFINITY, 0), |best, elem| {
             let d = delta_e::DE2000::from_rgb(&grey, &[elem.0, elem.0, elem.0]);
             if d < best.0 {
                 (d, elem.1)
