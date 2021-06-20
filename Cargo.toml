@@ -16,7 +16,7 @@ maintenance = { status = "actively-developed" }
 
 [dev-dependencies]
 delta_e = "^0.2"
-lab = "^0.8"
+lab = "0.*"
 
 [build-dependencies]
 cc = "^1.0"
