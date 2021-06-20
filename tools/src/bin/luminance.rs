@@ -54,7 +54,7 @@ fn luminance_isqrt(r: u8, g: u8, b: u8) -> u8 {
         let mut b = 1 << 16;
 
         while b > n {
-            b = b / 4;
+            b /= 4;
         }
 
         while b != 0 {
@@ -62,9 +62,9 @@ fn luminance_isqrt(r: u8, g: u8, b: u8) -> u8 {
                 n = n - x - b;
                 x = x / 2 + b;
             } else {
-                x = x / 2;
+                x /= 2;
             }
-            b = b / 4;
+            b /= 4;
         }
         x as u8
     }
@@ -187,7 +187,7 @@ fn measure_function(name: &'static str,
     }
     println!();
 
-    Histogram { name: name, data: histogram }
+    Histogram { name, data: histogram }
 }
 
 fn main() {
