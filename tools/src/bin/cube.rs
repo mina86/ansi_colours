@@ -45,7 +45,7 @@ fn find_best<F: Fn(u8) -> (u8, u8, u8)>(component: &'static str, to_rgb: F) {
             last = i;
         }
     }
-    print!("\n");
+    println!();
 }
 
 fn main() {
