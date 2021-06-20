@@ -1,5 +1,9 @@
 # True-colour ↔ ANSI terminal palette converter
 
+[![Crates.io](https://meritbadge.herokuapp.com/ansi_colours)](https://crates.io/crates/ansi_colours)
+[![Docs](https://docs.rs/ansi_colours/badge.svg)](https://docs.rs/ansi_colours)
+[![License](https://img.shields.io/badge/license-LGPL-blue.svg)](https://github.com/mina86/ansi_colours/blob/master/LICENSE)
+
 `ansi_colours` is a library which converts between 24-bit sRGB colours
 and 8-bit colour palette used by ANSI terminals such as xterm on
 rxvt-unicode in 256-colour mode.
