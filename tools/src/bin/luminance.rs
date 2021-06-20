@@ -36,15 +36,15 @@ fn luminance_average_32(r: u8, g: u8, b: u8) -> u8 {
 }
 
 fn luminance_average_float(r: u8, g: u8, b: u8) -> u8 {
-    (r as f32 * 0.21264934272065283 +
-     g as f32 * 0.7151691357059038  +
-     b as f32 * 0.07218152157344333 + 0.5) as u8
+    (r as f32 * 0.212_649_35 +
+     g as f32 * 0.715_169_13  +
+     b as f32 * 0.072_181_52 + 0.5) as u8
 }
 
 fn luminance_square(r: u8, g: u8, b: u8) -> u8 {
-    ((r as f32 * r as f32 * 0.21264934272065283 +
-      g as f32 * g as f32 * 0.7151691357059038  +
-      b as f32 * b as f32 * 0.07218152157344333).sqrt() + 0.5) as u8
+    ((r as f32 * r as f32 * 0.212_649_35 +
+      g as f32 * g as f32 * 0.715_169_13  +
+      b as f32 * b as f32 * 0.072_181_52).sqrt() + 0.5) as u8
 }
 
 fn luminance_isqrt(r: u8, g: u8, b: u8) -> u8 {
@@ -83,9 +83,9 @@ fn luminance_gamma22(r: u8, g: u8, b: u8) -> u8 {
         ((v.powf(1.0 / 2.2) * 255.0) + 0.5) as u8
     }
 
-    from_linear(0.21264934272065283 * to_linear(r) +
-                0.7151691357059038  * to_linear(g) +
-                0.07218152157344333 * to_linear(b))
+    from_linear(0.212_649_35 * to_linear(r) +
+                0.715_169_13  * to_linear(g) +
+                0.072_181_52 * to_linear(b))
 }
 
 fn luminance_xyz(r: u8, g: u8, b: u8) -> u8 {
@@ -105,9 +105,9 @@ fn luminance_xyz(r: u8, g: u8, b: u8) -> u8 {
         } + 0.5) as u8
     }
 
-    from_linear(0.21264934272065283 * to_linear(r) +
-                0.7151691357059038  * to_linear(g) +
-                0.07218152157344333 * to_linear(b))
+    from_linear(0.212_649_35 * to_linear(r) +
+                0.715_169_13  * to_linear(g) +
+                0.072_181_52 * to_linear(b))
 }
 
 fn distance(r: u8, g: u8, b: u8, grey: u8) -> f32 {
@@ -137,9 +137,9 @@ fn distance(r: u8, g: u8, b: u8, grey: u8) -> f32 {
     }
 
     let y =
-        0.21264934272065283 * to_linear(r) +
-        0.7151691357059038  * to_linear(g) +
-        0.07218152157344333 * to_linear(b);
+        0.212_649_35 * to_linear(r) +
+        0.715_169_13  * to_linear(g) +
+        0.072_181_52 * to_linear(b);
 
     de(l_from_y(y), l_from_y(to_linear(grey)))
 }
