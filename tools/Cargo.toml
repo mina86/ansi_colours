@@ -1,8 +1,9 @@
 [package]
-name = "tools"
+name    = "tools"
 version = "0.1.0"
 authors = ["Michal Nazarewicz <mina86@mina86.com>"]
 publish = false
+edition = "2018"
 
 [dependencies]
 delta_e = "^0.2"

@@ -10,6 +10,7 @@ license       = "LGPL-3.0-or-later"
 repository    = "https://github.com/mina86/ansi_colours"
 documentation = "https://docs.rs/ansi_colours"
 exclude       = ["tools/**"]
+edition       = "2018"
 
 [badges]
 maintenance = { status = "actively-developed" }
