@@ -14,13 +14,10 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with ansi_colours.  If not, see <http://www.gnu.org/licenses/>.
 
-extern crate delta_e;
-extern crate lab;
-
 static CUBE_VALUES: [u8; 6] = [0, 95, 135, 175, 215, 255];
 
 fn distance(x: &lab::Lab, y: (u8, u8, u8)) -> f32 {
-    delta_e::DE2000::new(*x, lab::Lab::from_rgb(&[y.0, y.1, y.2]))
+    empfindung::de2000::diff(*x, lab::Lab::from_rgb(&[y.0, y.1, y.2]))
 }
 
 fn find_best<F: Fn(u8) -> (u8, u8, u8)>(component: &'static str, to_rgb: F) {

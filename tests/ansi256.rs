@@ -1,8 +1,3 @@
-extern crate delta_e;
-extern crate lab;
-
-extern crate ansi_colours;
-
 fn to_rgb(index: u8) -> (u8, u8, u8) {
     ansi_colours::rgb_from_ansi256(index)
 }
@@ -57,7 +52,7 @@ fn best_grey(y: u8) -> u8 {
         .map(|(idx, v)| (*v, idx as u8 * (36 + 6 + 1) + 16))
         .chain((0..24u8).map(|idx| (idx * 10 + 8, idx + 232)))
         .fold((f32::INFINITY, 0), |best, elem| {
-            let d = delta_e::DE2000::from_rgb(&grey, &[elem.0, elem.0, elem.0]);
+            let d = empfindung::de2000::diff_rgb(&grey, &[elem.0, elem.0, elem.0]);
             if d < best.0 {
                 (d, elem.1)
             } else {
