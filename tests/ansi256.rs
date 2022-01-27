@@ -83,3 +83,17 @@ fn test_to_ansi_approx() {
     assert_eq!(232, to_ansi((  8,   7,   8)));
     assert_eq!( 64, to_ansi(( 97, 134,   8)));
 }
+
+/// Calculates RGB→ANSI for all colours and calculates a checksum of them
+/// comparing it to known value.  This is meant to see whether refactoring of
+/// the code does not change the behaviour.  If the computation is changed on
+/// purpose simply update the checksum in this test.
+#[test]
+fn from_rgb_checksum() {
+    let mut vec = Vec::with_capacity(1 << 24);
+    for rgb in 0..(1 << 24) {
+        vec.push(ansi_colours::ansi256_from_rgb(rgb));
+    }
+    let checksum = crc64::crc64(0, vec.as_slice());
+    assert_eq!(3373856917329536106, checksum);
+}

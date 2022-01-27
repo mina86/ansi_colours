@@ -16,6 +16,7 @@ edition       = "2018"
 maintenance = { status = "actively-developed" }
 
 [dev-dependencies]
+crc64 = "1"
 empfindung = "0.2"
 lab = ">=0.4, <1.0"
 
