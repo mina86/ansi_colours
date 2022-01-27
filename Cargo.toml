@@ -1,7 +1,7 @@
 [package]
 name          = "ansi_colours"
 description   = "true-colour ↔ ANSI terminal palette converter"
-version       = "1.0.4"
+version       = "1.1.0"
 readme        = "README.md"
 authors       = ["Michał Nazarewicz <mina86@mina86.com>"]
 keywords      = ["ansi", "terminal", "color", "rgb"]
@@ -14,6 +14,12 @@ edition       = "2018"
 
 [badges]
 maintenance = { status = "actively-developed" }
+
+[dependencies]
+rgb = { version = "0.8", optional = true }
+
+[features]
+default = ["rgb"]
 
 [dev-dependencies]
 crc64 = "1"

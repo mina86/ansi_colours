@@ -28,6 +28,12 @@
 //! accurate, instead it uses a formula which should be fast enough and accurate
 //! enough for most use-cases.
 //!
+//! The crate defines an `rgb` feature which adds support for the `RGB` type
+//! from [`rgb` crate](https://crates.io/crates/rgb).  The feature is enabled by
+//! default.  `RGB8` (a.k.a. `RGB<u8>`) as well as `RGB16` (a.k.a. `RGB<u16>`)
+//! types are supported.  Currently, in the latter type the 8 least significant
+//! bits of each channel are simply ignored.
+//!
 //! ## Usage
 //!
 //! Using this library with Cargo projects is as simple as adding a single
@@ -41,18 +47,23 @@
 //! and then using one of the two functions that the library provides:
 //!
 //! ```rust
-//! extern crate ansi_colours;
-//!
 //! use ansi_colours::*;
 //!
 //! fn main() {
 //!     // Colour at given index:
-//!     println!("{:-3}: {:?}", 50, rgb_from_ansi256(50));
+//!     println!("{:-3}: {:?}", 50, ansi_colours::rgb_from_ansi256(50));
 //!
 //!     // Approximate true-colour by colour in the palette:
 //!     let rgb = (100, 200, 150);
 //!     let index = ansi256_from_rgb(rgb);
-//!     println!("{:?} ~ {:-3} {:?}", rgb, index, rgb_from_ansi256(index));
+//!     println!("{:?} ~ {:-3} {:?}",
+//!              rgb, index, ansi_colours::rgb_from_ansi256(index));
+//!
+//!     // Approximate true-colour by colour in the palette:
+//!     let rgb = rgb::RGB8::new(100, 200, 150);
+//!     let index = ansi256_from_rgb(rgb);
+//!     println!("{:?} ~ {:-3} {:?}",
+//!              rgb, index, ansi_colours::rgb_from_ansi256(index));
 //! }
 //! ```
 
@@ -156,6 +167,22 @@ impl AsRGB for (u8, u8, u8) {
 
 impl AsRGB for [u8; 3] {
     fn as_u32(&self) -> u32 { to_u32(self[0], self[1], self[2]) }
+}
+
+#[cfg(feature = "rgb")]
+impl AsRGB for rgb::RGB<u8> {
+    fn as_u32(&self) -> u32 { to_u32(self.r, self.g, self.b) }
+}
+
+#[cfg(feature = "rgb")]
+impl AsRGB for rgb::RGB<u16> {
+    fn as_u32(&self) -> u32 {
+        to_u32(
+            (self.r >> 8) as u8,
+            (self.g >> 8) as u8,
+            (self.b >> 8) as u8,
+        )
+    }
 }
 
 impl<'a, T: AsRGB + ?Sized> AsRGB for &'a T {
