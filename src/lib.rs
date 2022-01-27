@@ -56,7 +56,7 @@
 //! }
 //! ```
 
-mod externs;
+mod ansi256;
 
 /// Returns sRGB colour corresponding to the index in the 256-colour ANSI
 /// palette.
@@ -81,7 +81,7 @@ mod externs;
 /// ```
 #[inline]
 pub fn rgb_from_ansi256(idx: u8) -> (u8, u8, u8) {
-    let rgb = unsafe { externs::rgb_from_ansi256(idx) };
+    let rgb = ansi256::ANSI_COLOURS[idx as usize];
     ((rgb >> 16) as u8, (rgb >> 8) as u8, rgb as u8)
 }
 
@@ -107,7 +107,27 @@ pub fn rgb_from_ansi256(idx: u8) -> (u8, u8, u8) {
 /// ```
 #[inline]
 pub fn ansi256_from_rgb<C: AsRGB>(rgb: C) -> u8 {
-    unsafe { externs::ansi256_from_rgb(rgb.as_u32()) }
+    ansi256::ansi256_from_rgb(rgb.as_u32())
+}
+
+/// Returns indexf o a colour in 256-colour ANSI palette approximating given
+/// shade of grey.
+///
+/// A shade of grey is an sRGB colour whose red, green and blue components are
+/// the same.  The function takes that component value as an argument.  It gives
+/// the same results as `ansi256_from_rgb((c, c, c))` but is slightly faster.
+///
+/// # Examples
+///
+///
+/// ```
+/// assert_eq!( 16, ansi_colours::ansi256_from_grey(0));
+/// assert_eq!( 16, ansi_colours::ansi256_from_grey(1));
+/// assert_eq!(231, ansi_colours::ansi256_from_grey(255));
+/// ```
+#[inline]
+pub fn ansi256_from_grey(component: u8) -> u8 {
+    ansi256::ANSI256_FROM_GREY[component as usize]
 }
 
 /// A trait for types which (can) represent an sRGB colour.  Used to provide

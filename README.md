@@ -23,6 +23,12 @@ enough and accurate enough for most use-cases.
 This library has C, C++ and Rust bindings and can be easily used from
 any of those languages.
 
+For best performance the package contains two separate (but
+equivalent) implementations of the conversion algorithms: one written
+in C and another written in Rust.  Since version 1.0.4 the Rust crate
+has sped up by over 25% when doing True Colour → ANSI index conversion
+and % when doing conversion in the other direction.
+
 ### Rust
 
 Using this package with Cargo projects is as simple as adding a single

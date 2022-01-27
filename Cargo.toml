@@ -21,9 +21,6 @@ criterion = { version = "0.3", default-features = false }
 empfindung = "0.2"
 lab = ">=0.4, <1.0"
 
-[build-dependencies]
-cc = "^1.0"
-
 [profile.release]
 lto = true
 panic = 'abort'

@@ -59,10 +59,23 @@ fn best_grey(y: u8) -> u8 {
         .1
 }
 
+/// Tests that converting `(c, c, c)` colour gives the best possible result.
 #[test]
 fn test_from_rgb_grey() {
     for i in 0..256 {
         assert_eq!(best_grey(i as u8), to_ansi((i as u8, i as u8, i as u8)));
+    }
+}
+
+/// Tests that getting value for grey colour given as RGB triple and one given
+/// as just shade of grey produce the same result.
+#[test]
+fn test_greys_agree() {
+    for i in 0..256 {
+        assert_eq!(
+            to_ansi((i as u8, i as u8, i as u8)),
+            ansi_colours::ansi256_from_grey(i as u8)
+        );
     }
 }
 
