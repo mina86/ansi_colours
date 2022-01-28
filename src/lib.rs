@@ -56,7 +56,9 @@
 //! }
 //! ```
 
-mod ansi256;
+pub(crate) mod ansi256;
+#[cfg(test)]
+mod test;
 
 /// Returns sRGB colour corresponding to the index in the 256-colour ANSI
 /// palette.

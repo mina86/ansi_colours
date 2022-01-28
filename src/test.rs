@@ -1,9 +1,10 @@
-fn to_rgb(index: u8) -> (u8, u8, u8) { ansi_colours::rgb_from_ansi256(index) }
+fn to_rgb(index: u8) -> (u8, u8, u8) { crate::rgb_from_ansi256(index) }
 
-fn to_ansi(rgb: (u8, u8, u8)) -> u8 { ansi_colours::ansi256_from_rgb(rgb) }
+fn to_ansi(rgb: (u8, u8, u8)) -> u8 { crate::ansi256_from_rgb(rgb) }
 
 static CUBE_VALUES: [u8; 6] = [0, 95, 135, 175, 215, 255];
 
+/// Tests that getting colour from the ANSI palette gives desired result.
 #[test]
 fn test_to_rgb() {
     #[rustfmt::skip]
@@ -74,11 +75,13 @@ fn test_greys_agree() {
     for i in 0..256 {
         assert_eq!(
             to_ansi((i as u8, i as u8, i as u8)),
-            ansi_colours::ansi256_from_grey(i as u8)
+            crate::ansi256_from_grey(i as u8)
         );
     }
 }
 
+/// Tests that converting colour which exists in the palette gives index of that
+/// colour in the palette.
 #[test]
 fn test_to_ansi_exact() {
     for i in 16..256 {
@@ -88,6 +91,7 @@ fn test_to_ansi_exact() {
     }
 }
 
+/// Tests a few approximations.
 #[test]
 #[rustfmt::skip]
 fn test_to_ansi_approx() {
@@ -105,7 +109,7 @@ fn test_to_ansi_approx() {
 fn from_rgb_checksum() {
     let mut vec = Vec::with_capacity(1 << 24);
     for rgb in 0..(1 << 24) {
-        vec.push(ansi_colours::ansi256_from_rgb(rgb));
+        vec.push(crate::ansi256_from_rgb(rgb));
     }
     let checksum = crc64::crc64(0, vec.as_slice());
     assert_eq!(3373856917329536106, checksum);
