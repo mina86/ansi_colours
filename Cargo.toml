@@ -17,6 +17,7 @@ maintenance = { status = "actively-developed" }
 
 [dev-dependencies]
 crc64 = "1"
+criterion = { version = "0.3", default-features = false }
 empfindung = "0.2"
 lab = ">=0.4, <1.0"
 
@@ -26,3 +27,7 @@ cc = "^1.0"
 [profile.release]
 lto = true
 panic = 'abort'
+
+[[bench]]
+name = "ansi256"
+harness = false
