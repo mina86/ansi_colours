@@ -1,10 +1,6 @@
-fn to_rgb(index: u8) -> (u8, u8, u8) {
-    ansi_colours::rgb_from_ansi256(index)
-}
+fn to_rgb(index: u8) -> (u8, u8, u8) { ansi_colours::rgb_from_ansi256(index) }
 
-fn to_ansi(rgb: (u8, u8, u8)) -> u8 {
-    ansi_colours::ansi256_from_rgb(rgb)
-}
+fn to_ansi(rgb: (u8, u8, u8)) -> u8 { ansi_colours::ansi256_from_rgb(rgb) }
 
 static CUBE_VALUES: [u8; 6] = [0, 95, 135, 175, 215, 255];
 
@@ -52,7 +48,8 @@ fn best_grey(y: u8) -> u8 {
         .map(|(idx, v)| (*v, idx as u8 * (36 + 6 + 1) + 16))
         .chain((0..24u8).map(|idx| (idx * 10 + 8, idx + 232)))
         .fold((f32::INFINITY, 0), |best, elem| {
-            let d = empfindung::de2000::diff_rgb(&grey, &[elem.0, elem.0, elem.0]);
+            let d =
+                empfindung::de2000::diff_rgb(&grey, &[elem.0, elem.0, elem.0]);
             if d < best.0 {
                 (d, elem.1)
             } else {
