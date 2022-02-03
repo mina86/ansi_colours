@@ -58,11 +58,11 @@ fn main() {
 ```
 
 To facilitate better interoperability, since version 1.1, this crate
-supports the `rgb::RGB` type defined by [`rgb`
-crate](https://crates.io/crates/rgb).  The support is controlled by an
-`rgb` feature.  With it enabled (which is the default),
-`ansi256_from_rgb` function will accept `RGB<u8>` and `RGB<u16>`
-values as arguments though `rgb_from_ansi256` will still return
+supports `rgb::RGB` type defined in [`rgb`
+crate](https://crates.io/crates/rgb).  The support is controlled by
+`rgb` crate feature.  With it enabled (which is the default),
+`ansi256_from_rgb` function accepts `RGB<u8>` and `RGB<u16>` values as
+arguments though `rgb_from_ansi256` still returns colours as tuples.
 
 ### C and C++
 
