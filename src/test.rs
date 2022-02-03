@@ -107,10 +107,13 @@ fn test_to_ansi_approx() {
 /// purpose simply update the checksum in this test.
 #[test]
 fn from_rgb_checksum() {
-    let mut vec = Vec::with_capacity(1 << 24);
+    let mut buf = [0; 1 << 12];
+    let mut checksum = 0;
     for rgb in 0..(1 << 24) {
-        vec.push(crate::ansi256_from_rgb(rgb));
+        buf[rgb % buf.len()] = crate::ansi256_from_rgb(rgb as u32);
+        if rgb % buf.len() == buf.len() - 1 {
+            checksum = crc64::crc64(checksum, &buf);
+        }
     }
-    let checksum = crc64::crc64(0, vec.as_slice());
     assert_eq!(3373856917329536106, checksum);
 }

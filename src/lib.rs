@@ -67,6 +67,8 @@
 //! }
 //! ```
 
+#![no_std]
+
 pub(crate) mod ansi256;
 #[cfg(test)]
 mod test;
