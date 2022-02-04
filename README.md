@@ -20,14 +20,12 @@ enough and accurate enough for most use-cases.
 
 ## Usage
 
-This library has C, C++ and Rust bindings and can be easily used from
-any of those languages.
-
-For best performance the package contains two separate (but
-equivalent) implementations of the conversion algorithms: one written
-in C and another written in Rust.  Since version 1.0.4 the Rust crate
-has sped up by over 25% when doing True Colour → ANSI index conversion
-and % when doing conversion in the other direction.
+This library has C and Rust implementations and can be easily used
+from either of those languages (as well as from C++ of course).  The
+two implementations are equivalent and are provided for best
+performance.  Since version 1.0.4 the Rust crate has sped up by 25%
+when doing True Colour → ANSI index conversion and 75% when doing
+conversion in the other direction.
 
 ### Rust
 
@@ -39,11 +37,9 @@ dependency:
 ansi_colours = "1.1"
 ```
 
-and then using one of the two functions that the library provides:
+and then using one of functions that the library provides:
 
 ```rust
-extern crate ansi_colours;
-
 use ansi_colours::*;
 
 fn main() {
@@ -57,12 +53,11 @@ fn main() {
 }
 ```
 
-To facilitate better interoperability, since version 1.1, this crate
-supports `rgb::RGB` type defined in [`rgb`
-crate](https://crates.io/crates/rgb).  The support is controlled by
-`rgb` crate feature.  With it enabled (which is the default),
+To facilitate better interoperability this library supports `rgb::RGB`
+from [`rgb` crate](https://crates.io/crates/rgb).  The support is
+controlled by `rgb` feature.  With it enabled (which is the default),
 `ansi256_from_rgb` function accepts `RGB<u8>` and `RGB<u16>` values as
-arguments though `rgb_from_ansi256` still returns colours as tuples.
+arguments (though `rgb_from_ansi256` still returns colours as tuples).
 
 ### C and C++
 
@@ -91,4 +86,4 @@ int main() {
 
 Unfortunately neither C nor C++ ecosystem has a centralised package
 distribution service so there currently is no more convenient
-solution..
+solution.
