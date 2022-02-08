@@ -34,3 +34,6 @@ panic = 'abort'
 [[bench]]
 name = "ansi256"
 harness = false
+
+[package.metadata.docs.rs]
+rustc-args = ["--all-features"]
