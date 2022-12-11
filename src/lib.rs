@@ -67,7 +67,6 @@
 //! }
 //! ```
 
-#![feature(doc_cfg)]
 #![no_std]
 
 pub(crate) mod ansi256;
@@ -173,13 +172,11 @@ impl AsRGB for [u8; 3] {
 }
 
 #[cfg(feature = "rgb")]
-#[doc(cfg(feature = "rgb"))]
 impl AsRGB for rgb::RGB<u8> {
     fn as_u32(&self) -> u32 { to_u32(self.r, self.g, self.b) }
 }
 
 #[cfg(feature = "rgb")]
-#[doc(cfg(feature = "rgb"))]
 impl AsRGB for rgb::RGB<u16> {
     fn as_u32(&self) -> u32 {
         to_u32(
