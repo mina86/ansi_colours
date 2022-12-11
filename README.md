@@ -4,28 +4,25 @@
 [![Docs](https://docs.rs/ansi_colours/badge.svg)](https://docs.rs/ansi_colours)
 [![License](https://img.shields.io/badge/license-LGPL-blue.svg)](https://github.com/mina86/ansi_colours/blob/master/LICENSE)
 
-`ansi_colours` is a library which converts between 24-bit sRGB colours
-and 8-bit colour palette used by ANSI terminals such as xterm on
-rxvt-unicode in 256-colour mode.
+`ansi_colours` converts between 24-bit sRGB colours and 8-bit colour
+palette used by ANSI terminals such as xterm or rxvt-unicode in
+256-colour mode.  The most common use case is when using 24-bit
+colours in a terminal emulator which only support 8-bit colour
+palette.  It allows true-colours to be approximated by values
+supported by the terminal.
 
-The most common use case is when using 24-bit colours in a terminal
-emulator which only support 8-bit colour palette.  This package allows
-true-colours to be approximated by values supported by the terminal.
-
-When mapping true-colour into available 256-colour palette (of which
-only 240 are actually usable), this package tries to balance accuracy
-and performance.  It doesn’t implement the fastest algorithm nor is it
-the most accurate, instead it uses a formula which should be fast
-enough and accurate enough for most use-cases.
+When mapping true-colour into available 256-colour palette, it tries
+to balance accuracy and performance.  It doesn’t implement the fastest
+algorithm nor is it the most accurate, instead it uses a formula which
+should be fast enough and accurate enough for most use-cases.
 
 ## Usage
 
-This library has C and Rust implementations and can be easily used
-from either of those languages (as well as from C++ of course).  The
-two implementations are equivalent and are provided for best
-performance.  Since version 1.0.4 the Rust crate has sped up by 25%
-when doing True Colour → ANSI index conversion and 75% when doing
-conversion in the other direction.
+The algorithm has C and Rust implementations and can be easily used
+from C, C++ or Rust.  The two implementations are equivalent and are
+provided for best performance.  Since version 1.0.4 the Rust crate has
+sped up by 25% when doing True Colour → ANSI index conversion and 75%
+when doing conversion in the other direction.
 
 ### Rust
 
@@ -53,11 +50,18 @@ fn main() {
 }
 ```
 
-To facilitate better interoperability this library supports `rgb::RGB`
-from [`rgb` crate](https://crates.io/crates/rgb).  The support is
-controlled by `rgb` feature.  With it enabled (which is the default),
-`ansi256_from_rgb` function accepts `RGB<u8>` and `RGB<u16>` values as
-arguments (though `rgb_from_ansi256` still returns colours as tuples).
+To facilitate better interoperability the crate defines `rgb` crate
+feature (enabled by default).  It adds support for the `RGB` type from
+[`rgb` crate](https://crates.io/crates/rgb).  Specifically, `RGB8`
+(a.k.a. `RGB<u8>`) as well as `RGB16` (a.k.a. `RGB<u16>`) types are
+supported.
+
+Furthermore, `ansi_term` cargo features is also available which adds
+support for `Colour` type from [`ansi_term`
+crate](https://crates.io/crates/ansi_term).  This includes support for
+calling `ansi256_from_rgb` with a `Colour` argument and implementation
+of `ColourExt` trait which extends `Colour` with additional conversion
+methods.
 
 ### C and C++
 

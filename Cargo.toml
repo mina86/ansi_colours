@@ -12,10 +12,14 @@ documentation = "https://docs.rs/ansi_colours"
 exclude       = ["tools/**"]
 edition       = "2018"
 
+[package.metadata.docs.rs]
+all-features = true
+
 [badges]
 maintenance = { status = "actively-developed" }
 
 [dependencies]
+ansi_term = { version = "0.12", optional = true }
 rgb = { version = "0.8", optional = true }
 
 [features]
