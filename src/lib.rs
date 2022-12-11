@@ -33,12 +33,13 @@
 //! (a.k.a. `RGB<u8>`) as well as `RGB16` (a.k.a. `RGB<u16>`) types are
 //! supported.
 //!
-//! Furthermore, `ansi_term` cargo features is also available which adds
-//! support for `Colour` type from [`ansi_term`
-//! crate](https://crates.io/crates/ansi_term).  This includes support for
-//! calling `ansi256_from_rgb` with a `Colour` argument and implementation
-//! of `ColourExt` trait which extends `Colour` with additional conversion
-//! methods.
+//! Furthermore, `ansi_term` and `termcolor` features are available.  They
+//! add support for `Colour` type from [`ansi_term`
+//! crate](https://crates.io/crates/ansi_term) and `Color` type from
+//! [`termcolor` crate](https://crates.io/crates/termcolor) respectively.
+//! This includes support for calling `ansi256_from_rgb` with arguments of
+//! those types and implementation of `ColourExt` trait which extends the
+//! types with additional conversion methods.
 //!
 //! ## Usage
 //!
