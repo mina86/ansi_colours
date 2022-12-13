@@ -58,13 +58,12 @@
 //!
 //! fn main() {
 //!     // Colour at given index:
-//!     println!("{:-3}: {:?}", 50, ansi_colours::rgb_from_ansi256(50));
+//!     println!("{:-3}: {:?}", 50, rgb_from_ansi256(50));
 //!
 //!     // Approximate true-colour by colour in the palette:
 //!     let rgb = (100, 200, 150);
 //!     let index = ansi256_from_rgb(rgb);
-//!     println!("{:?} ~ {:-3} {:?}",
-//!              rgb, index, ansi_colours::rgb_from_ansi256(index));
+//!     println!("{:?} ~ {:-3} {:?}", rgb, index, rgb_from_ansi256(index));
 //! }
 //! ```
 
@@ -173,7 +172,8 @@ pub trait ColourExt: Sized {
     ///
     /// # Examples
     ///
-    /// ```ignore
+    #[cfg_attr(feature = "ansi_term", doc = "```")]
+    #[cfg_attr(not(feature = "ansi_term"), doc = "```ignore")]
     /// use ansi_colours::ColourExt;
     /// use ansi_term::Colour;
     ///
@@ -207,7 +207,8 @@ pub trait ColourExt: Sized {
     ///
     /// # Examples
     ///
-    /// ```ignore
+    #[cfg_attr(feature = "ansi_term", doc = "```")]
+    #[cfg_attr(not(feature = "ansi_term"), doc = "```ignore")]
     /// use ansi_colours::ColourExt;
     /// use ansi_term::Colour;
     ///
@@ -231,7 +232,8 @@ pub trait ColourExt: Sized {
     ///
     /// # Examples
     ///
-    /// ```ignore
+    #[cfg_attr(feature = "ansi_term", doc = "```")]
+    #[cfg_attr(not(feature = "ansi_term"), doc = "```ignore")]
     /// use ansi_colours::ColourExt;
     /// use ansi_term::Colour;
     ///
