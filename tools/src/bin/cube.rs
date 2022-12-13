@@ -20,7 +20,7 @@ fn distance(x: &lab::Lab, y: (u8, u8, u8)) -> f32 {
     empfindung::de2000::diff(*x, lab::Lab::from_rgb(&[y.0, y.1, y.2]))
 }
 
-fn find_best<F: Fn(u8) -> (u8, u8, u8)>(component: &'static str, to_rgb: F) {
+fn find_best(component: &'static str, to_rgb: fn(u8) -> (u8, u8, u8)) {
     print!("{:5}: ", component);
     let colours: std::vec::Vec<_> = CUBE_VALUES.iter().map(|v| {
         let (r, g, b) = to_rgb(*v);
@@ -30,13 +30,7 @@ fn find_best<F: Fn(u8) -> (u8, u8, u8)>(component: &'static str, to_rgb: F) {
     for want in 0..256 {
         let (i, _) = colours.iter().enumerate().map(|(i, colour)| (
             i, distance(colour, to_rgb(want as u8))
-        )).min_by(|x, y| if x.1 < y.1 {
-            std::cmp::Ordering::Less
-        } else if x.1 > y.1 {
-            std::cmp::Ordering::Greater
-        } else {
-            std::cmp::Ordering::Equal
-        }).unwrap();
+        )).min_by(|x, y| x.1.partial_cmp(&y.1).unwrap()).unwrap();
         if i != last {
             print!("{}{:3}", if last == 0 { "" } else {", " }, want);
             last = i;
