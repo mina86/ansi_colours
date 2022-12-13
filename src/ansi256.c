@@ -159,12 +159,6 @@ uint8_t ansi256_from_rgb(uint32_t rgb) {
 		231, 231, 231, 231, 231, 231, 231, 231,
 	};
 
-	/* First of, if it’s shade of grey, we know exactly the best colour that
-	   approximates it. */
-	if (R(rgb) == G(rgb) && G(rgb) == B(rgb)) {
-		return ansi256_from_grey[rgb & 0xff];
-	}
-
 	uint8_t grey_index = ansi256_from_grey[luminance(rgb)];
 	uint32_t grey_distance = distance(rgb, rgb_from_ansi256(grey_index));
 	uint32_t cube = cube_index_red(R(rgb)) + cube_index_green(G(rgb)) +

@@ -143,12 +143,6 @@ fn to_triple(rgb: u32) -> (u8, u8, u8) {
 pub(crate) fn ansi256_from_rgb(rgb: u32) -> u8 {
     let (r, g, b) = to_triple(rgb);
 
-    // First of, if it’s shade of grey, we know exactly the best colour that
-    // approximates it.
-    if r == g && g == b {
-        return ANSI256_FROM_GREY[b as usize];
-    }
-
     let grey_index = ANSI256_FROM_GREY[luminance(r, g, b) as usize];
     let grey_distance = distance((r, g, b), ANSI_COLOURS[grey_index as usize]);
     let (cube_index, cube_rgb) = cube_index(r, g, b);
