@@ -61,7 +61,11 @@
 //!     println!("{:-3}: {:?}", 50, rgb_from_ansi256(50));
 //!
 //!     // Approximate true-colour by colour in the palette:
-//!     let rgb = (100, 200, 150);
+#![cfg_attr(
+    feature = "rgb",
+    doc = r#"    let rgb = rgb::RGB8 { r: 100, g: 200, b: 150 };"#
+)]
+#![cfg_attr(not(feature = "rgb"), doc = r#"    let rgb = (100, 200, 150);"#)]
 //!     let index = ansi256_from_rgb(rgb);
 //!     println!("{:?} ~ {:-3} {:?}", rgb, index, rgb_from_ansi256(index));
 //! }
@@ -94,6 +98,17 @@ mod test;
 /// assert_eq!(( 95, 135, 175), ansi_colours::rgb_from_ansi256( 67));
 /// assert_eq!((255, 255, 255), ansi_colours::rgb_from_ansi256(231));
 /// assert_eq!((238, 238, 238), ansi_colours::rgb_from_ansi256(255));
+#[cfg_attr(
+    feature = "rgb",
+    doc = r#"
+
+let rgb = rgb::RGB8::from(ansi_colours::rgb_from_ansi256(128));
+assert_eq!(rgb::RGB8 { r: 175, g: 0, b: 215 }, rgb);
+
+let grey = rgb::alt::Gray::<u8>(128);
+assert_eq!(244, ansi_colours::ansi256_from_rgb(grey));
+"#
+)]
 /// ```
 #[inline]
 pub fn rgb_from_ansi256(idx: u8) -> (u8, u8, u8) {
@@ -107,7 +122,7 @@ pub fn rgb_from_ansi256(idx: u8) -> (u8, u8, u8) {
 /// Because the first 16 colours of the palette are not standardised and usually
 /// user-configurable, the function usually ignores them.
 ///
-/// Th first argument uses [`AsRGB`] trait so that the function can be called in
+/// The first argument uses [`AsRGB`] trait so that the function can be called in
 /// multiple ways using different representations of RGB colours such as
 /// `0xRRGGBB` integer, `(r, g, b)` tuple or `[r, g, b]` array.  Calling the
 /// function is equivalent to calling [`AsRGB::to_ansi256`] method.
@@ -121,6 +136,19 @@ pub fn rgb_from_ansi256(idx: u8) -> (u8, u8, u8) {
 /// assert_eq!( 16, ansi_colours::ansi256_from_rgb( [  0,   1,   2]));
 /// assert_eq!( 67, ansi_colours::ansi256_from_rgb(&( 95, 135, 175)));
 /// assert_eq!(231, ansi_colours::ansi256_from_rgb(&[255, 255, 255]));
+#[cfg_attr(
+    feature = "rgb",
+    doc = r#"
+
+let rgb = rgb::RGB8 { r: 175, g: 0, b: 215 };
+assert_eq!(128, ansi_colours::ansi256_from_rgb(rgb));
+let bgr = rgb::RGB8 { b: 215, g: 0, r: 175 };
+assert_eq!(128, ansi_colours::ansi256_from_rgb(bgr));
+
+let grey = rgb::alt::Gray::<u8>(128);
+assert_eq!(244, ansi_colours::ansi256_from_rgb(grey));
+"#
+)]
 /// ```
 #[inline]
 pub fn ansi256_from_rgb<C: AsRGB>(rgb: C) -> u8 { rgb.to_ansi256() }
@@ -128,9 +156,10 @@ pub fn ansi256_from_rgb<C: AsRGB>(rgb: C) -> u8 { rgb.to_ansi256() }
 /// Returns index of a colour in 256-colour ANSI palette approximating given
 /// shade of grey.
 ///
-/// A shade of grey is an sRGB colour whose red, green and blue components are
-/// the same.  The function takes that component value as an argument.  It gives
-/// the same results as `ansi256_from_rgb((c, c, c))` but is faster.
+/// This gives the same results as `ansi256_from_rgb((component, component,
+/// component))` but is faster.  Provided that the `rgb` crate feature is
+/// enabled, it is equivalent (in behaviour and performance) to
+/// `ansi256_from_rgb(rgb::alt::Grey(component))`.
 ///
 /// # Examples
 ///
@@ -139,6 +168,15 @@ pub fn ansi256_from_rgb<C: AsRGB>(rgb: C) -> u8 { rgb.to_ansi256() }
 /// assert_eq!( 16, ansi_colours::ansi256_from_grey(0));
 /// assert_eq!( 16, ansi_colours::ansi256_from_grey(1));
 /// assert_eq!(231, ansi_colours::ansi256_from_grey(255));
+#[cfg_attr(
+    feature = "rgb",
+    doc = r#"
+
+let grey = rgb::alt::Gray::<u8>(128);
+assert_eq!(244, ansi_colours::ansi256_from_grey(*grey));
+assert_eq!(244, ansi_colours::ansi256_from_rgb(grey));
+"#
+)]
 /// ```
 #[inline]
 pub fn ansi256_from_grey(component: u8) -> u8 {

@@ -20,8 +20,27 @@ impl AsRGB for [u8; 3] {
     fn as_u32(&self) -> u32 { to_u32(self[0], self[1], self[2]) }
 }
 
+impl<'a, T: AsRGB + ?Sized> AsRGB for &'a T {
+    fn as_u32(&self) -> u32 { (*self).as_u32() }
+}
+
 #[cfg(feature = "rgb")]
-impl AsRGB for rgb::RGB<u8> {
+trait Component {
+    fn into_u8(&self) -> u8;
+}
+#[cfg(feature = "rgb")]
+impl Component for u8 {
+    #[inline(always)]
+    fn into_u8(&self) -> u8 { *self }
+}
+#[cfg(feature = "rgb")]
+impl Component for u16 {
+    #[inline(always)]
+    fn into_u8(&self) -> u8 { (*self >> 8) as u8 }
+}
+
+#[cfg(feature = "rgb")]
+impl<C: Component> AsRGB for rgb::RGB<C> {
     /// Returns representation of the sRGB colour as a 24-bit `0xRRGGBB`
     /// integer.
     ///
@@ -38,18 +57,44 @@ impl AsRGB for rgb::RGB<u8> {
     /// assert_eq!( 16, ansi256_from_rgb(rgb::RGB8::new(  0,   1,   2)));
     /// assert_eq!( 67, ansi256_from_rgb(rgb::RGB8::new( 95, 135, 175)));
     /// assert_eq!(231, ansi256_from_rgb(rgb::RGB8::new(255, 255, 255)));
+    ///
+    /// assert_eq!(0x123456, rgb::RGB16::new(0x12ab, 0x34cd, 0x56ef).as_u32());
+    ///
+    /// assert_eq!( 16, ansi256_from_rgb(rgb::RGB16::new(  256,   511,   256)));
+    /// assert_eq!( 16, ansi256_from_rgb(rgb::RGB16::new(  128,   256,   512)));
+    /// assert_eq!( 67, ansi256_from_rgb(rgb::RGB16::new(24500, 34600, 44800)));
+    /// assert_eq!(231, ansi256_from_rgb(rgb::RGB16::new(65535, 65535, 65535)));
     /// ```
-    #[inline]
-    fn as_u32(&self) -> u32 { to_u32(self.r, self.g, self.b) }
+    #[inline(always)]
+    fn as_u32(&self) -> u32 {
+        to_u32(self.r.into_u8(), self.g.into_u8(), self.b.into_u8())
+    }
 }
 
 #[cfg(feature = "rgb")]
-impl AsRGB for rgb::RGB<u16> {
+impl<C: Component> AsRGB for rgb::alt::Gray<C> {
+    #[inline(always)]
+    fn as_u32(&self) -> u32 { self.into_u8() as u32 * 0x010101 }
+
+    /// Returns index of a colour in 256-colour ANSI palette approximating given
+    /// shade grey.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ansi_colours::ansi256_from_rgb;
+    ///
+    /// assert_eq!(244, ansi256_from_rgb(rgb::alt::Gray::<u8>(128)));
+    /// assert_eq!(244, ansi256_from_rgb(rgb::alt::Gray::<u16>(33023)));
+    /// ```
+    #[inline(always)]
+    fn to_ansi256(&self) -> u8 { crate::ansi256_from_grey(self.into_u8()) }
+}
+
+#[cfg(feature = "rgb")]
+impl<C: Component> AsRGB for rgb::alt::BGR<C> {
     /// Returns representation of the sRGB colour as a 24-bit `0xRRGGBB`
     /// integer.
-    ///
-    /// In current implementation, when converting, the eight least significant
-    /// bits of each components are ignored.
     ///
     /// This implementation is present only if `rgb` crate feature is enabled.
     ///
@@ -57,26 +102,26 @@ impl AsRGB for rgb::RGB<u16> {
     ///
     /// ```
     /// use ansi_colours::{AsRGB, ansi256_from_rgb};
+    /// use rgb::alt::{BGR8, BGR16};
     ///
-    /// assert_eq!(0x123456, rgb::RGB8::new(0x12, 0x34, 0x56).as_u32());
+    /// assert_eq!(0x123456, BGR8 { b: 0x56, g: 0x34, r: 0x12 }.as_u32());
     ///
-    /// assert_eq!( 16, ansi256_from_rgb(rgb::RGB16::new(  256,   511,   256)));
-    /// assert_eq!( 16, ansi256_from_rgb(rgb::RGB16::new(  128,   256,   512)));
-    /// assert_eq!( 67, ansi256_from_rgb(rgb::RGB16::new(24500, 34600, 44800)));
-    /// assert_eq!(231, ansi256_from_rgb(rgb::RGB16::new(65535, 65535, 65535)));
+    /// assert_eq!( 16, ansi256_from_rgb(BGR8 { r:   1, g:   1, b:   1 }));
+    /// assert_eq!( 16, ansi256_from_rgb(BGR8 { r:   0, g:   1, b:   2 }));
+    /// assert_eq!( 67, ansi256_from_rgb(BGR8 { r:  95, g: 135, b: 175 }));
+    /// assert_eq!(231, ansi256_from_rgb(BGR8 { r: 255, g: 255, b: 255 }));
+    ///
+    /// assert_eq!(0x123456, BGR16 { b: 0x56ef, g: 0x34cd, r: 0x12ab }.as_u32());
+    ///
+    /// assert_eq!( 16, ansi256_from_rgb(BGR16 { r:   256, g:   511, b:   256 }));
+    /// assert_eq!( 16, ansi256_from_rgb(BGR16 { r:   128, g:   256, b:   512 }));
+    /// assert_eq!( 67, ansi256_from_rgb(BGR16 { r: 24500, g: 34600, b: 44800 }));
+    /// assert_eq!(231, ansi256_from_rgb(BGR16 { r: 65535, g: 65535, b: 65535 }));
     /// ```
-    #[inline]
+    #[inline(always)]
     fn as_u32(&self) -> u32 {
-        to_u32(
-            (self.r >> 8) as u8,
-            (self.g >> 8) as u8,
-            (self.b >> 8) as u8,
-        )
+        to_u32(self.r.into_u8(), self.g.into_u8(), self.b.into_u8())
     }
-}
-
-impl<'a, T: AsRGB + ?Sized> AsRGB for &'a T {
-    fn as_u32(&self) -> u32 { (*self).as_u32() }
 }
 
 #[cfg(feature = "ansi_term")]
