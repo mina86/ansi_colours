@@ -194,9 +194,14 @@ pub trait AsRGB {
     /// sRGB colour.
     ///
     /// This is provided by default and uses [`Self::as_u32`] to determine
-    /// 24-bit sRGB representation of the colour.  The method should be
-    /// implemented for types which have multiple representations one of which
-    /// stores index in the palette which can be returned directly.
+    /// 24-bit sRGB representation of the colour.
+    ///
+    /// An implementation should provide its own definition if it can offer
+    /// a more direct approximation.  For example, if `Self` represents shades
+    /// of grey, it’s faster to use [`ansi256_from_grey`] than relay on `to_u32`
+    /// conversion; or if it represents a variant which can store index in the
+    /// palette or an RGB colour, it’s better to either return the index or
+    /// perform approximation depending on the variant.
     #[inline]
     fn to_ansi256(&self) -> u8 {
         crate::ansi256::ansi256_from_rgb(self.as_u32())

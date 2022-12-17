@@ -45,6 +45,7 @@ impl<C: Component> AsRGB for rgb::RGB<C> {
     /// integer.
     ///
     /// This implementation is present only if `rgb` crate feature is enabled.
+    /// Implementation is provided for `u8` and `u16` colour component types.
     ///
     /// # Examples
     ///
@@ -79,6 +80,9 @@ impl<C: Component> AsRGB for rgb::alt::Gray<C> {
     /// Returns index of a colour in 256-colour ANSI palette approximating given
     /// shade grey.
     ///
+    /// This implementation is present only if `rgb` crate feature is enabled.
+    /// Implementation is provided for `u8` and `u16` colour component types.
+    ///
     /// # Examples
     ///
     /// ```
@@ -97,6 +101,7 @@ impl<C: Component> AsRGB for rgb::alt::BGR<C> {
     /// integer.
     ///
     /// This implementation is present only if `rgb` crate feature is enabled.
+    /// Implementation is provided for `u8` and `u16` colour component types.
     ///
     /// # Examples
     ///
@@ -136,6 +141,9 @@ impl AsRGB for ansi_term::Colour {
     ///   specified index.  See [`rgb_from_ansi256`](`rgb_from_ansi256`).
     /// - Lastly, for `RGB` variant converts it to 24-bit `0xRRGGBB`
     ///   representation.
+    ///
+    /// This implementation is present only if `ansi_term` crate feature is
+    /// enabled.
     #[inline]
     fn as_u32(&self) -> u32 {
         match self.clone() {
@@ -162,6 +170,8 @@ impl AsRGB for ansi_term::Colour {
     /// - Lastly, for `RGB` variant, approximates the colour and returns index
     ///   of closest colour in 256-colour palette.
     ///
+    /// This implementation is present only if `ansi_term` crate feature is
+    /// enabled.
     ///
     /// # Examples
     ///
@@ -198,6 +208,9 @@ impl AsRGB for ansi_term::Colour {
 impl super::ColourExt for ansi_term::Colour {
     /// Constructs a `Fixed` colour which approximates given sRGB colour.
     ///
+    /// This implementation is present only if `ansi_term` crate feature is
+    /// enabled.
+    ///
     /// # Examples
     ///
     /// ```
@@ -219,6 +232,9 @@ impl super::ColourExt for ansi_term::Colour {
     /// If the colour represents an RGB colour, converts it into a `Fixed`
     /// variant using [`ansi256_from_rgb`] function.  Otherwise, returns the
     /// colour unchanged.
+    ///
+    /// This implementation is present only if `ansi_term` crate feature is
+    /// enabled.
     ///
     /// # Examples
     ///
@@ -248,6 +264,9 @@ impl super::ColourExt for ansi_term::Colour {
     /// `Fixed` colours with indexes 0 through 7.  `Fixed` colours are converted
     /// into sRGB using [`rgb_from_ansi256`] function.  `RGB` colours are
     /// returned unchanged.
+    ///
+    /// This implementation is present only if `ansi_term` crate feature is
+    /// enabled.
     ///
     /// # Examples
     ///
@@ -291,6 +310,9 @@ impl AsRGB for termcolor::Color {
     ///   specified index.  See [`rgb_from_ansi256`](`rgb_from_ansi256`).
     /// - Lastly, for `Rgb` variant converts it to 24-bit `0xRRGGBB`
     ///   representation.
+    ///
+    /// This implementation is present only if `termcolor` crate feature is
+    /// enabled.
     #[inline]
     fn as_u32(&self) -> u32 {
         match self.clone() {
@@ -318,6 +340,8 @@ impl AsRGB for termcolor::Color {
     /// - Lastly, for `Rgb` variant, approximates the colour and returns index
     ///   of closest colour in 256-colour palette.
     ///
+    /// This implementation is present only if `termcolor` crate feature is
+    /// enabled.
     ///
     /// # Examples
     ///
@@ -355,6 +379,9 @@ impl AsRGB for termcolor::Color {
 impl super::ColourExt for termcolor::Color {
     /// Constructs a `Ansi256` colour which approximates given sRGB colour.
     ///
+    /// This implementation is present only if `termcolor` crate feature is
+    /// enabled.
+    ///
     /// # Examples
     ///
     /// ```
@@ -376,6 +403,9 @@ impl super::ColourExt for termcolor::Color {
     /// If the colour represents an RGB colour, converts it into an `Ansi256`
     /// variant using [`ansi256_from_rgb`] function.  Otherwise, returns the
     /// colour unchanged.
+    ///
+    /// This implementation is present only if `termcolor` crate feature is
+    /// enabled.
     ///
     /// # Examples
     ///
@@ -405,6 +435,9 @@ impl super::ColourExt for termcolor::Color {
     /// `Ansi256` colours with indexes 0 through 7.  `Ansi256` colours are
     /// converted into sRGB using [`rgb_from_ansi256`] function.  `Rgb` colours
     /// are returned unchanged.
+    ///
+    /// This implementation is present only if `termcolor` crate feature is
+    /// enabled.
     ///
     /// # Examples
     ///

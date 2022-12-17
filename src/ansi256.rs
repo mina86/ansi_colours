@@ -91,12 +91,20 @@ pub(crate) static ANSI_COLOURS: [u32; 256] = [
 ];
 
 /// A lookup table for approximations of shades of grey.  Values chosen to get
-/// smallest possible ΔE*₀₀.  A lookup table is used because calculating correct
-/// mapping has several corner cases.  For one, the greyscale ramp starts at
-/// rgb(8, 8, 8) but ends at rgb(238, 238, 238) resulting in asymmetric distance
-/// to the extreme values.  For another, shades of grey are present in the
-/// greyscale ramp as well as the 6×6×6 colour cube making it necessary to
-/// consider multiple cases.
+/// smallest possible ΔE*₀₀.
+///
+/// Calculating the mapping has several corner cases.  The greyscale ramp starts
+/// at rgb(8, 8, 8) but ends at rgb(238, 238, 238) resulting in asymmetric
+/// distance to the extreme values.  Shades of grey are present in the greyscale
+/// ramp as well as the 6×6×6 colour cube making it necessary to consider
+/// multiple cases. And that all on top of ANSI palette using linear indexes in
+/// gamma encoded colour space.
+///
+/// Not to have to deal with all that, the colours are simply precalculated.
+/// This way we know we always get the best possible match.  This also makes
+/// conversion for grey colours blazing fast.
+///
+/// There’s a unit test that verifies that those are the best indexes.
 #[rustfmt::skip]
 pub(crate) static ANSI256_FROM_GREY: [u8; 256] = [
      16,  16,  16,  16,  16, 232, 232, 232,
@@ -219,8 +227,7 @@ fn luminance(r: u8, g: u8, b: u8) -> u8 {
 /// perceptual correctness.  It’s not a proper metric but two properties this
 /// function provides are: d(x, x) = 0 and d(x, y) < d(x, z) implies x being
 /// closer to y than to z.
-fn distance(x: (u8, u8, u8), y: u32) -> u32 {
-    let (xr, xg, xb) = x;
+fn distance((xr, xg, xb): (u8, u8, u8), y: u32) -> u32 {
     let (yr, yg, yb) = to_triple(y);
     // See <https://www.compuphase.com/cmetric.htm> though we’re doing a few
     // things to avoid some of the calculations.  We can do that since we only

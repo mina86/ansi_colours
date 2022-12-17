@@ -117,13 +117,19 @@ uint32_t rgb_from_ansi256(uint8_t index) {
 /* Returns index of a colour in 256-colour ANSI palette approximating given sRGB
    colour. */
 uint8_t ansi256_from_rgb(uint32_t rgb) {
-	/* A lookup table for approximations of shades of grey.  Values chosen
-	   to get smallest possible ΔE*₀₀.  A lookup table is used because
-	   calculating correct mapping has several corner cases.  For one, the
-	   greyscale ramp starts at rgb(8, 8, 8) but ends at rgb(238, 238, 238)
-	   resulting in asymmetric distance to the extreme values.  For another,
-	   shades of grey are present in the greyscale ramp as well as the 6×6×6
-	   colour cube making it necessary to consider multiple cases. */
+	/* A lookup table for approximations of shades of grey.  Values chosen to
+	   get smallest possible ΔE*₀₀.
+
+	   Calculating the mapping has several corner cases.  The greyscale ramp
+	   starts at rgb(8, 8, 8) but ends at rgb(238, 238, 238) resulting in
+	   asymmetric distance to the extreme values.  Shades of grey are
+	   present in the greyscale ramp as well as the 6×6×6 colour cube making
+	   it necessary to consider multiple cases. And that all on top of ANSI
+	   palette using linear indexes in gamma encoded colour space.
+
+	   Not to have to deal with all that, the colours are simply
+	   precalculated.  This way we know we always get the best possible
+	   match.  This also makes conversion for grey colours blazing fast. */
 	static const uint8_t ansi256_from_grey[256] = {
 		 16,  16,  16,  16,  16, 232, 232, 232,
 		232, 232, 232, 232, 232, 232, 233, 233,
