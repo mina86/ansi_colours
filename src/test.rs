@@ -42,21 +42,16 @@ fn test_to_rgb() {
 /// Tries all colours in the 256-colour ANSI palette and chooses one with
 /// smallest ΔE*₀₀ to `rgb(y, y, y)`.
 fn best_grey(y: u8) -> u8 {
-    let grey = [y, y, y];
+    let reference = empfindung::ToLab::to_lab(&rgb::alt::Gray(y));
     CUBE_VALUES
         .iter()
         .enumerate()
-        .map(|(idx, v)| (*v, idx as u8 * (36 + 6 + 1) + 16))
-        .chain((0..24u8).map(|idx| (idx * 10 + 8, idx + 232)))
-        .fold((f32::INFINITY, 0), |best, elem| {
-            let d =
-                empfindung::de2000::diff_rgb(&grey, &[elem.0, elem.0, elem.0]);
-            if d < best.0 {
-                (d, elem.1)
-            } else {
-                best
-            }
-        })
+        .map(|(idx, v)| (idx as u8 * (36 + 6 + 1) + 16, *v))
+        .chain((0..24u8).map(|idx| (idx + 232, idx * 10 + 8)))
+        .map(|(idx, grey)| (idx, rgb::alt::Gray(grey)))
+        .map(|(idx, grey)| (empfindung::cie00::diff(reference, grey), idx))
+        .reduce(|x, y| if x.0 < y.0 { x } else { y })
+        .unwrap()
         .1
 }
 

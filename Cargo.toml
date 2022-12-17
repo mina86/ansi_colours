@@ -29,8 +29,9 @@ default = ["rgb"]
 [dev-dependencies]
 crc64 = "1"
 criterion = { version = "0.3", default-features = false }
-empfindung = "0.2"
+empfindung = "0.2.6"
 lab = ">=0.4, <1.0"
+rgb = "0.8"
 
 [profile.release]
 lto = true
