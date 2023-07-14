@@ -31,7 +31,7 @@ dependency:
 
 ```toml
 [dependencies]
-ansi_colours = "1.1"
+ansi_colours = "1.2"
 ```
 
 and then using one of functions that the library provides:
