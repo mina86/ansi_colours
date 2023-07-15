@@ -90,6 +90,9 @@ mod test;
 /// ramp.  Those are standardised and thus should be the same on every terminal
 /// which supports 256-colour colour palette.
 ///
+/// The palette can be viewed on [helpful
+/// chart](https://upload.wikimedia.org/wikipedia/commons/1/15/Xterm_256color_chart.svg).
+///
 /// # Examples
 ///
 ///
@@ -183,8 +186,8 @@ pub fn ansi256_from_grey(component: u8) -> u8 {
     ansi256::ANSI256_FROM_GREY[component as usize]
 }
 
-/// Type which (can) represent an sRGB colour.  Used to provide overloaded
-/// versions of `ansi256_from_rgb` function.
+/// Type which represents a colour convertible to sRGB.  Used to provide
+/// overloaded versions of `ansi256_from_rgb` function.
 pub trait AsRGB {
     /// Returns representation of the sRGB colour as a 24-bit `0xRRGGBB`
     /// integer.

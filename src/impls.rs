@@ -78,7 +78,7 @@ impl<C: Component> AsRGB for rgb::alt::Gray<C> {
     fn as_u32(&self) -> u32 { self.into_u8() as u32 * 0x010101 }
 
     /// Returns index of a colour in 256-colour ANSI palette approximating given
-    /// shade grey.
+    /// shade of grey.
     ///
     /// This implementation is present only if `rgb` crate feature is enabled.
     /// Implementation is provided for `u8` and `u16` colour component types.
@@ -131,16 +131,15 @@ impl<C: Component> AsRGB for rgb::alt::BGR<C> {
 
 #[cfg(feature = "ansi_term")]
 impl AsRGB for ansi_term::Colour {
-    /// Returns sRGB colour corresponding to escape code represented by
-    /// [`ansi_term::Colour`].
+    /// Returns sRGB colour corresponding to escape code represented by the
+    /// object.
     ///
     /// Behaves slightly differently depending on the variant of the enum.
     /// - For named colour variants (`Black`, `Red` etc. up till `White`),
     ///   returns corresponding system colour with indexes going from 0 to 7.
-    /// - Similarly, for `Fixed` variant returns colour corresponding to
-    ///   specified index.  See [`rgb_from_ansi256`](`rgb_from_ansi256`).
-    /// - Lastly, for `RGB` variant converts it to 24-bit `0xRRGGBB`
-    ///   representation.
+    /// - For `Fixed` variant returns colour corresponding to specified index.
+    ///   See [`rgb_from_ansi256`](`rgb_from_ansi256`).
+    /// - For `RGB` variant converts it to 24-bit `0xRRGGBB` representation.
     ///
     /// This implementation is present only if `ansi_term` crate feature is
     /// enabled.
@@ -155,7 +154,7 @@ impl AsRGB for ansi_term::Colour {
             Self::Purple => ansi256::ANSI_COLOURS[5],
             Self::Cyan => ansi256::ANSI_COLOURS[6],
             Self::White => ansi256::ANSI_COLOURS[7],
-            Self::Fixed(idx) => ansi256::ANSI_COLOURS[idx as usize],
+            Self::Fixed(idx) => ansi256::ANSI_COLOURS[usize::from(idx)],
             Self::RGB(r, g, b) => (r, g, b).as_u32(),
         }
     }
@@ -306,10 +305,9 @@ impl AsRGB for termcolor::Color {
     /// Behaves slightly differently depending on the variant of the enum.
     /// - For named colour variants (`Black`, `Red` etc. up till `White`),
     ///   returns corresponding system colour with indexes going from 0 to 7.
-    /// - Similarly, for `Ansi256` variant returns colour corresponding to
-    ///   specified index.  See [`rgb_from_ansi256`](`rgb_from_ansi256`).
-    /// - Lastly, for `Rgb` variant converts it to 24-bit `0xRRGGBB`
-    ///   representation.
+    /// - For `Ansi256` variant returns colour corresponding to specified index.
+    ///   See [`rgb_from_ansi256`](`rgb_from_ansi256`).
+    /// - For `Rgb` variant converts it to 24-bit `0xRRGGBB` representation.
     ///
     /// This implementation is present only if `termcolor` crate feature is
     /// enabled.
@@ -324,7 +322,7 @@ impl AsRGB for termcolor::Color {
             Self::Magenta => ansi256::ANSI_COLOURS[5],
             Self::Yellow => ansi256::ANSI_COLOURS[3],
             Self::White => ansi256::ANSI_COLOURS[7],
-            Self::Ansi256(idx) => ansi256::ANSI_COLOURS[idx as usize],
+            Self::Ansi256(idx) => ansi256::ANSI_COLOURS[usize::from(idx)],
             Self::Rgb(r, g, b) => (r, g, b).as_u32(),
             _ => unreachable!(),
         }
