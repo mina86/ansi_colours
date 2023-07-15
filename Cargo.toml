@@ -27,8 +27,8 @@ termcolor = { version = ">= 1.0, <= 1.2", optional = true }
 default = ["rgb"]
 
 [dev-dependencies]
-crc64 = "1"
-criterion = { version = "0.3", default-features = false }
+crc64 = "2"
+criterion = { version = "0.5", default-features = false }
 empfindung = "0.2.6"
 lab = ">=0.4, <1.0"
 rgb = "0.8"
