@@ -101,6 +101,7 @@ fn test_to_ansi_approx() {
 /// the code does not change the behaviour.  If the computation is changed on
 /// purpose simply update the checksum in this test.
 #[test]
+#[cfg_attr(miri, ignore = "runs too slow on Miri")]
 fn from_rgb_checksum() {
     let mut buf = [0; 1 << 12];
     let mut checksum = 0;
