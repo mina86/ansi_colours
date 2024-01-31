@@ -25,18 +25,18 @@ impl<'a, T: AsRGB + ?Sized> AsRGB for &'a T {
 }
 
 #[cfg(feature = "rgb")]
-trait Component {
-    fn into_u8(&self) -> u8;
+trait Component: Copy {
+    fn into_u8(self) -> u8;
 }
 #[cfg(feature = "rgb")]
 impl Component for u8 {
     #[inline(always)]
-    fn into_u8(&self) -> u8 { *self }
+    fn into_u8(self) -> u8 { self }
 }
 #[cfg(feature = "rgb")]
 impl Component for u16 {
     #[inline(always)]
-    fn into_u8(&self) -> u8 { (*self >> 8) as u8 }
+    fn into_u8(self) -> u8 { (self >> 8) as u8 }
 }
 
 #[cfg(feature = "rgb")]
