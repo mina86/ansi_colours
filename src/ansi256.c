@@ -173,10 +173,10 @@ uint8_t ansi256_from_rgb(uint32_t rgb) {
 }
 
 
-/* The next three functions approximate a pure colour by a colour in the 6×6×6
-   colour cube.  E.g. cube_index_red(r) approximates an rgb(r, 0, 0) colour.
-   This was motivated by ΔE*₀₀ being most variable in dark colours so I felt
-   it’s more important to better approximate dark colours than white colours.
+/* The next three functions approximate a pure colour by an entry in the 6×6×6
+   cube.  E.g. cube_index_red(r) approximates an rgb(r, 0, 0) colour.  This was
+   motivated by ΔE*₀₀ being most variable in dark colours so I felt it’s more
+   important to better approximate dark colours than light colours.
 
    The return values of the functions is kinda weird but it makes
    ansi256_from_rgb a bit shorter, as in having to do a bit fewer things. */
@@ -189,27 +189,24 @@ uint8_t ansi256_from_rgb(uint32_t rgb) {
 	else if (v < e) return IDX(4, 215);	\
 	else            return IDX(5, 255);
 
-#define IDX(i, v) ((((uint32_t)i * 36 + 16) << 24) | ((uint32_t)v << 16))
-
 static uint32_t cube_index_red(uint8_t v) {
+#	define IDX(i, v) ((((uint32_t)i * 36 + 16) << 24) | ((uint32_t)v << 16))
 	CUBE_THRESHOLDS(38, 115, 155, 196, 235);
+#	undef IDX
 }
-
-#undef IDX
-#define IDX(i, v) ((((uint32_t)i * 6) << 24) | ((uint32_t)v << 8))
 
 static uint32_t cube_index_green(uint8_t v) {
+#	define IDX(i, v) ((((uint32_t)i * 6) << 24) | ((uint32_t)v << 8))
 	CUBE_THRESHOLDS(36, 116, 154, 195, 235);
+#	undef IDX
 }
-
-#undef IDX
-#define IDX(i, v) (((uint32_t)i << 24) | (uint32_t)v)
 
 static uint32_t cube_index_blue(uint8_t v) {
+#	define IDX(i, v) (((uint32_t)i << 24) | (uint32_t)v)
 	CUBE_THRESHOLDS(35, 115, 155, 195, 235);
+#	undef IDX
 }
 
-#undef IDX
 #undef CUBE_THRESHOLDS
 
 
@@ -217,7 +214,7 @@ static uint32_t cube_index_blue(uint8_t v) {
    precision and so doesn’t correctly account for sRGB’s gamma correction. */
 static uint8_t luminance(uint32_t rgb) {
 	/* The following weighted average is as fast as naive arithmetic mean
-	   and at the same time noticeably more prices.  The coefficients are
+	   and at the same time noticeably more precise.  The coefficients are
 	   the second row of the RGB->XYZ conversion matrix (i.e. values for
 	   calculating Y from linear RGB) which I’ve calculated so that
 	   denominator is 2^24 to simplify division.  */

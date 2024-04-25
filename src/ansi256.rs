@@ -178,10 +178,10 @@ fn cube_thresholds(v: u8, a: u8, b: u8, c: u8, d: u8, e: u8) -> (u8, u32) {
     else          { (5, 255) }
 }
 
-// The next three functions approximate a pure colour by a colour in the 6×6×6
-// colour cube.  E.g. cube_index_red(r) approximates an rgb(r, 0, 0) colour.
-// This was motivated by ΔE*₀₀ being most variable in dark colours so I felt
-// it’s more important to better approximate dark colours than white colours.
+// The next three functions approximate a pure colour by an entry in the 6×6×6
+// cube.  E.g. cube_index_red(r) approximates an rgb(r, 0, 0) colour.  This was
+// motivated by ΔE*₀₀ being most variable in dark colours so I felt it’s more
+// important to better approximate dark colours than light colours.
 
 fn cube_index_red(v: u8) -> (u8, u32) {
     let (i, v) = cube_thresholds(v, 38, 115, 155, 196, 235);
@@ -201,7 +201,7 @@ fn cube_index_blue(v: u8) -> (u8, u32) {
 /// precision and so doesn’t correctly account for sRGB’s gamma correction.
 fn luminance(r: u8, g: u8, b: u8) -> u8 {
     // The following weighted average is as fast as naive arithmetic mean and at
-    // the same time noticeably more prices.  The coefficients are the second
+    // the same time noticeably more precise.  The coefficients are the second
     // row of the RGB->XYZ conversion matrix (i.e. values for calculating Y from
     // linear RGB) which I’ve calculated so that denominator is 2^24 to simplify
     // division.
