@@ -51,8 +51,8 @@ fn main() {
 ```
 
 To facilitate better interoperability the crate defines `rgb` (enabled
-by default), `ansi_term` and `termcolor` cargo features which add
-support to crates with the same name.
+by default), `ansi_term`, `anstyle`, and `termcolor` cargo features
+which add support for crates with the same name.
 
 ### C and C++
 

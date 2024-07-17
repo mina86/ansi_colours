@@ -250,10 +250,9 @@ impl super::ColourExt for ansi_term::Colour {
     /// ```
     #[inline]
     fn to_256(&self) -> Self {
-        if let Self::RGB(r, g, b) = self {
-            Self::Fixed(ansi256_from_rgb((*r, *g, *b)))
-        } else {
-            *self
+        match *self {
+            Self::RGB(r, g, b) => Self::approx_rgb(r, g, b),
+            colour => colour,
         }
     }
 
@@ -420,10 +419,9 @@ impl super::ColourExt for termcolor::Color {
     /// ```
     #[inline]
     fn to_256(&self) -> Self {
-        if let Self::Rgb(r, g, b) = self {
-            Self::Ansi256(ansi256_from_rgb((*r, *g, *b)))
-        } else {
-            *self
+        match *self {
+            Self::Rgb(r, g, b) => Self::approx_rgb(r, g, b),
+            colour => colour,
         }
     }
 
@@ -465,5 +463,160 @@ impl super::ColourExt for termcolor::Color {
             _ => unreachable!(),
         };
         rgb_from_ansi256(idx)
+    }
+}
+
+#[cfg(feature = "anstyle")]
+impl AsRGB for anstyle::RgbColor {
+    /// Returns representation of the sRGB colour as a 24-bit `0xRRGGBB`
+    /// integer.
+    ///
+    /// This implementation is present only if `anstyle` crate feature is
+    /// enabled.
+    #[inline(always)]
+    fn as_u32(&self) -> u32 { to_u32(self.0, self.1, self.2) }
+}
+
+#[cfg(feature = "anstyle")]
+impl ColourExt for anstyle::Ansi256Color {
+    /// Constructs an colour which best approximates given sRGB colour.
+    ///
+    /// This implementation is present only if `anstyle` crate feature is
+    /// enabled.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ansi_colours::ColourExt;
+    /// use anstyle::Ansi256Color;
+    ///
+    /// assert_eq!(Ansi256Color( 16), Ansi256Color::approx_rgb(  0,   0,   0));
+    /// assert_eq!(Ansi256Color( 16), Ansi256Color::approx_rgb(  0,   1,   2));
+    /// assert_eq!(Ansi256Color( 67), Ansi256Color::approx_rgb( 95, 135, 175));
+    /// assert_eq!(Ansi256Color(231), Ansi256Color::approx_rgb(255, 255, 255));
+    /// ```
+    #[inline(always)]
+    fn approx_rgb(r: u8, g: u8, b: u8) -> Self {
+        Self(ansi256_from_rgb((r, g, b)))
+    }
+
+    /// Returns `self`.
+    ///
+    /// This implementation is present only if `anstyle` crate feature is
+    /// enabled.
+    #[inline(always)]
+    fn to_256(&self) -> Self { *self }
+
+    /// Converts the colour into sRGB.
+    ///
+    /// This implementation is present only if `anstyle` crate feature is
+    /// enabled.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ansi_colours::ColourExt;
+    /// use anstyle::Ansi256Color;
+    ///
+    /// assert_eq!((  0,   0,   0), Ansi256Color( 16).to_rgb());
+    /// assert_eq!(( 95, 135, 175), Ansi256Color( 67).to_rgb());
+    /// assert_eq!((255, 255, 255), Ansi256Color(231).to_rgb());
+    /// assert_eq!((238, 238, 238), Ansi256Color(255).to_rgb());
+    /// ```
+    #[inline(always)]
+    fn to_rgb(&self) -> (u8, u8, u8) { rgb_from_ansi256(self.0) }
+}
+
+#[cfg(feature = "anstyle")]
+impl ColourExt for anstyle::Color {
+    /// Constructs an ANSI 256 colour which best approximates given sRGB colour.
+    ///
+    /// This implementation is present only if `anstyle` crate feature is
+    /// enabled.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ansi_colours::ColourExt;
+    /// use anstyle::{Ansi256Color, Color};
+    ///
+    /// assert_eq!(Color::Ansi256(Ansi256Color( 16)),
+    ///            Color::approx_rgb(  0,   0,   0));
+    /// assert_eq!(Color::Ansi256(Ansi256Color( 16)),
+    ///            Color::approx_rgb(  0,   1,   2));
+    /// assert_eq!(Color::Ansi256(Ansi256Color( 67)),
+    ///            Color::approx_rgb( 95, 135, 175));
+    /// assert_eq!(Color::Ansi256(Ansi256Color(231)),
+    ///            Color::approx_rgb(255, 255, 255));
+    /// ```
+    #[inline]
+    fn approx_rgb(r: u8, g: u8, b: u8) -> Self {
+        Self::Ansi256(anstyle::Ansi256Color::approx_rgb(r, g, b))
+    }
+
+    /// Converts the colour into 256-colour-compatible format.
+    ///
+    /// If the colour represents an RGB colour, converts it into an `Ansi256`
+    /// variant using [`ansi256_from_rgb`] function.  Otherwise, returns the
+    /// colour unchanged.
+    ///
+    /// This implementation is present only if `anstyle` crate feature is
+    /// enabled.
+    ///
+    /// # Examples
+    ///
+    /// ```ignore
+    /// use ansi_colours::ColourExt;
+    /// use anstyle::{Ansi256Color, AnsiColor, Color, RgbColor};
+    ///
+    /// assert_eq!(Color::Ansi(AnsiColor::Red),
+    ///            Color::Ansi(AnsiColor::Red).to_256());
+    /// assert_eq!(Color::Ansi256(Ansi256Color( 11)),
+    ///            Color::Ansi256(Ansi256Color( 11)).to_256());
+    /// assert_eq!(Color::Ansi256(Ansi256Color( 16)),
+    ///            Color::Rgb(RgbColor(  0,   0,   0)).to_256());
+    /// assert_eq!(Color::Ansi256(Ansi256Color( 16)),
+    ///            Color::Rgb(RgbColor(  0,   1,   2)).to_256());
+    /// assert_eq!(Color::Ansi256(Ansi256Color( 67)),
+    ///            Color::Rgb(RgbColor( 95, 135, 175)).to_256());
+    /// assert_eq!(Color::Ansi256(Ansi256Color(231)),
+    ///            Color::Rgb(RgbColor(255, 255, 255)).to_256());
+    /// ```
+    #[inline]
+    fn to_256(&self) -> Self {
+        match *self {
+            Self::Rgb(anstyle::RgbColor(r, g, b)) => Self::approx_rgb(r, g, b),
+            colour => colour,
+        }
+    }
+
+    /// Converts the colour into sRGB.
+    ///
+    /// `AnsiColour` and `Ansi256Color` colour variants are converted into sRGB
+    /// using [`rgb_from_ansi256`] function.  `Rgb` colours are returned
+    /// unchanged.
+    ///
+    /// This implementation is present only if `anstyle` crate feature is
+    /// enabled.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ansi_colours::ColourExt;
+    /// use anstyle::{Ansi256Color, AnsiColor, Color, RgbColor};
+    ///
+    /// assert_eq!((  0,   0,   0), Color::Ansi256(Ansi256Color( 16)).to_rgb());
+    /// assert_eq!(( 95, 135, 175), Color::Ansi256(Ansi256Color( 67)).to_rgb());
+    /// assert_eq!((255, 255, 255), Color::Ansi256(Ansi256Color(231)).to_rgb());
+    /// assert_eq!((238, 238, 238), Color::Ansi256(Ansi256Color(255)).to_rgb());
+    /// assert_eq!(( 42,  24,   0), Color::Rgb(RgbColor(42, 24, 0)).to_rgb());
+    /// ```
+    #[inline(always)]
+    fn to_rgb(&self) -> (u8, u8, u8) {
+        rgb_from_ansi256(match *self {
+            Self::Ansi(colour) => colour as u8,
+            Self::Ansi256(colour) => colour.0,
+            Self::Rgb(anstyle::RgbColor(r, g, b)) => return (r, g, b),
+        })
     }
 }
