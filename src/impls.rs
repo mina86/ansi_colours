@@ -145,7 +145,7 @@ impl AsRGB for ansi_term::Colour {
     /// enabled.
     #[inline]
     fn as_u32(&self) -> u32 {
-        match self.clone() {
+        match *self {
             Self::Black => ansi256::ANSI_COLOURS[0],
             Self::Red => ansi256::ANSI_COLOURS[1],
             Self::Green => ansi256::ANSI_COLOURS[2],
@@ -188,7 +188,7 @@ impl AsRGB for ansi_term::Colour {
     /// ```
     #[inline]
     fn to_ansi256(&self) -> u8 {
-        match self.clone() {
+        match *self {
             Self::Black => 0,
             Self::Red => 1,
             Self::Green => 2,
@@ -281,7 +281,7 @@ impl super::ColourExt for ansi_term::Colour {
     /// ```
     #[inline]
     fn to_rgb(&self) -> (u8, u8, u8) {
-        let idx = match self.clone() {
+        let idx = match *self {
             Self::Black => 0,
             Self::Red => 1,
             Self::Green => 2,
@@ -313,7 +313,7 @@ impl AsRGB for termcolor::Color {
     /// enabled.
     #[inline]
     fn as_u32(&self) -> u32 {
-        match self.clone() {
+        match *self {
             Self::Black => ansi256::ANSI_COLOURS[0],
             Self::Blue => ansi256::ANSI_COLOURS[4],
             Self::Green => ansi256::ANSI_COLOURS[2],
@@ -357,7 +357,7 @@ impl AsRGB for termcolor::Color {
     /// ```
     #[inline]
     fn to_ansi256(&self) -> u8 {
-        match self.clone() {
+        match *self {
             Self::Black => 0,
             Self::Blue => 4,
             Self::Green => 2,
@@ -451,7 +451,7 @@ impl super::ColourExt for termcolor::Color {
     /// ```
     #[inline]
     fn to_rgb(&self) -> (u8, u8, u8) {
-        let idx = match self.clone() {
+        let idx = match *self {
             Self::Black => 0,
             Self::Blue => 4,
             Self::Green => 2,
