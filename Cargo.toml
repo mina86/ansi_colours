@@ -10,7 +10,8 @@ license       = "LGPL-3.0-or-later"
 repository    = "https://github.com/mina86/ansi_colours"
 documentation = "https://docs.rs/ansi_colours"
 exclude       = ["tools/**"]
-edition       = "2018"
+rust-version  = "1.56"
+edition       = "2021"
 
 [package.metadata.docs.rs]
 all-features = true

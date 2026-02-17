@@ -20,12 +20,12 @@ impl AsRGB for [u8; 3] {
     fn as_u32(&self) -> u32 { to_u32(self[0], self[1], self[2]) }
 }
 
-impl<'a, T: AsRGB + ?Sized> AsRGB for &'a T {
+impl<T: AsRGB + ?Sized> AsRGB for &T {
     fn as_u32(&self) -> u32 { (*self).as_u32() }
 }
 
 #[cfg(feature = "rgb")]
-trait Component: Copy {
+pub trait Component: Copy {
     fn into_u8(self) -> u8;
 }
 #[cfg(feature = "rgb")]
