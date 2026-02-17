@@ -1,6 +1,6 @@
 [package]
 name          = "ansi_colours"
-description   = "true-colour ↔ ANSI terminal palette converter"
+description   = "24-bit True Colour ↔ 256-colour ANSI terminal palette conversion library"
 version       = "1.2.3"
 readme        = "README.md"
 authors       = ["Michał Nazarewicz <mina86@mina86.com>"]

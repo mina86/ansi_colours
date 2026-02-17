@@ -1,4 +1,4 @@
-# True-colour ↔ ANSI terminal palette converter
+# 24-bit True Colour ↔ 256-colour ANSI terminal palette conversion library
 
 [![crates.io](https://img.shields.io/crates/v/ansi_colours)](https://crates.io/crates/ansi_colours)
 [![Docs](https://docs.rs/ansi_colours/badge.svg)](https://docs.rs/ansi_colours)
@@ -56,10 +56,11 @@ which add support for crates with the same name.
 
 ### C and C++
 
-The easiest way to use this library in C or C++ is to copy the
-`ansi_colour.h` and `ansi256.c` files to your project, set up
-compilation step for the `ansi256.c` file, add the header file to the
-include path and once all that is done use the two provided functions:
+The easiest way to use this library in C or C++ is to vendor it.  Either
+by copying `ansi_colours.h` and `ansi256.c` files to your project or
+creating a submodule and pointing it at library’s git repository.  Then,
+set up compilation step for the `ansi256.c` file and add the header file
+to the include path to have access to the two provided functions:
 
 ```c
 #include <stdio.h>
@@ -79,6 +80,7 @@ int main() {
 }
 ```
 
-Unfortunately neither C nor C++ ecosystem has a centralised package
-distribution service so there currently is no more convenient
-solution.
+Unfortunately neither C nor C++ ecosystem has an official centralised
+package distribution service so there currently is no more convenient
+solution.  For reference, the `examples` directory includes a simple
+C program and a simple Makefile that builds it.
